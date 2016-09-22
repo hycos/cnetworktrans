@@ -29,6 +29,7 @@ public abstract class SmtTranslator {
 
     public void init() {
         for(Node n : this.cn.vertexSet()) {
+            logger.info("Node " + n.getLabel());
             if(n.isLiteral() || n.isRegex() || n.isOperand()) {
                 this.vresolv.put(n, n.getLabel());
             }
