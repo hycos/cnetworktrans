@@ -69,7 +69,7 @@ public class TestTranslators {
             e.printStackTrace();
         }**/
 
-        //logger.info(out);
+        //LOGGER.info(out);
     }
 
     @Test
@@ -324,7 +324,7 @@ public class TestTranslators {
         String out = splitter.process();
         splitter.getResult();
         logger.info(out);
-        //logger.info(regex.toDot());
+        //LOGGER.info(regex.toDot());
 
     }
 

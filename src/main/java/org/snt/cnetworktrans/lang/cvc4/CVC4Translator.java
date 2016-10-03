@@ -17,7 +17,7 @@ import java.util.Stack;
 
 public class CVC4Translator extends SmtTranslator {
 
-    final static Logger logger = LoggerFactory.getLogger(CVC4Translator.class);
+    final static Logger LOGGER = LoggerFactory.getLogger(CVC4Translator.class);
 
     public CVC4Translator() {
     }
@@ -36,6 +36,7 @@ public class CVC4Translator extends SmtTranslator {
     @Override
     public String translate() throws NotSupportedException {
         StringBuilder finalOut = new StringBuilder();
+        LOGGER.debug("translate");
 
         finalOut.append("(set-logic QF_S)\n" +
                 "(set-option :produce-models true)\n" +
@@ -55,8 +56,10 @@ public class CVC4Translator extends SmtTranslator {
                 finalOut.append("(declare-fun " + n.getLabel() + " () " + type + ")\n");
             }
             // backtrack starting from basic constraints
-            if(n.isConstraint())
+            if(n.isConstraint()) {
+                LOGGER.debug("is constraint " + n.getLabel());
                 doBacktrack(n);
+            }
         }
 
         finalOut.append("\n");
@@ -72,6 +75,10 @@ public class CVC4Translator extends SmtTranslator {
         finalOut.append("(check-sat)\n" + "(get-model)");
 
         debug();
+        assert(finalOut != null);
+        assert(finalOut.toString() != null);
+
+        LOGGER.debug("HEEELOO");
 
         return finalOut.toString();
     }
@@ -85,7 +92,7 @@ public class CVC4Translator extends SmtTranslator {
 
         if (ctxCheck(op, OperationKind.MATCHES) && op.isString()) {
 
-            logger.info("CHECK " + op.getLabel());
+            LOGGER.info("CHECK " + op.getLabel());
             // first parameters of Matches are always strings
             Set<Edge> incoming = cn.outgoingEdgesOf(op);
             if(incoming != null) {
@@ -112,6 +119,7 @@ public class CVC4Translator extends SmtTranslator {
     @Override
     public Stack<String> getOperationTrans(Node op) throws NotSupportedException {
 
+        LOGGER.info("get Operation Trans " );
         Stack<String> ret = new Stack<String>();
 
         Operation operation = null;
@@ -127,7 +135,7 @@ public class CVC4Translator extends SmtTranslator {
         }
 
         List<Node> params = this.cn.getParametersFor(op);
-
+        LOGGER.debug("handle " + operation.getKind());
         switch(operation.getKind()){
             case ADD:
                 ret.push("+");
@@ -283,7 +291,7 @@ public class CVC4Translator extends SmtTranslator {
         RegexParser rp = new RegexParser();
         Ast regex = rp.parse(SmtEscape.trimQuotes(n.getLabel()));
 
-        logger.info(regex.toDot());
+        LOGGER.info(regex.toDot());
 
         String result = new CVC4RegexSplitter(regex).process();
 

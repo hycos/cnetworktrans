@@ -53,7 +53,7 @@ public abstract class SmtTranslator {
     }
 
     protected void backtrack(Node n) throws NotSupportedException {
-
+        logger.debug("backtrack " + n.getLabel());
         ctxPush(n);
 
         if (n.isRegex()) {

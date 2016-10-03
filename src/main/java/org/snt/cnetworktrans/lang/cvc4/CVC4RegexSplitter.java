@@ -202,7 +202,7 @@ public class CVC4RegexSplitter extends RegexSplitter {
                 break;
         }
 
-        //logger.info(debug());
+        //LOGGER.info(debug());
     }
 
     private String esc(String s) {
