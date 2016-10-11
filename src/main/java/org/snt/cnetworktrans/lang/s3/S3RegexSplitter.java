@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
 
 public class S3RegexSplitter extends RegexSplitter {
 
-    final static Logger logger = LoggerFactory.getLogger(S3RegexSplitter.class);
+    final static Logger LOGGER = LoggerFactory.getLogger(S3RegexSplitter.class);
 
     private static String CONCAT = "Concat";
     private static String UNION = "Union";
@@ -46,7 +46,7 @@ public class S3RegexSplitter extends RegexSplitter {
     @Override
     protected void process(AstNode n) {
 
-        logger.info("Handle " + n.getId() + " " + n.getRule());
+        LOGGER.info("Handle " + n.getId() + " " + n.getRule());
 
         switch (n.getRule()) {
 
@@ -161,7 +161,7 @@ public class S3RegexSplitter extends RegexSplitter {
                             //smap.put(n, var);
 
                             smap.put(n, sran);
-                            logger.info("min " + min + " max" + max);
+                            LOGGER.info("min " + min + " max" + max);
                         }
                     }
                 }
@@ -226,7 +226,7 @@ public class S3RegexSplitter extends RegexSplitter {
                 }
                 break;
         }
-        logger.info(debug());
+        LOGGER.info(debug());
     }
 
     private String esc(String s) {

@@ -13,7 +13,7 @@ import java.util.Map;
 
 public abstract class RegexSplitter extends AstProcessor <String,String> {
 
-    final static Logger logger = LoggerFactory.getLogger(RegexSplitter.class);
+    final static Logger LOGGER = LoggerFactory.getLogger(RegexSplitter.class);
 
     protected Map<String, String> vmap = new HashMap<String, String>();
 

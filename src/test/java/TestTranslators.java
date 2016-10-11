@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 
 public class TestTranslators {
 
-    final static Logger logger = LoggerFactory.getLogger(TestTranslators.class);
+    final static Logger LOGGER = LoggerFactory.getLogger(TestTranslators.class);
 
 
     private static ConstraintNetwork cn = null;
@@ -55,7 +55,7 @@ public class TestTranslators {
     public void testZ3() {
 
 
-        logger.info("Test Z3");
+        LOGGER.info("Test Z3");
         SmtTranslator sa = OutputFormat.Z3STR2.getTranslator();
         try {
             sa.setConstraintNetwork(cn);
@@ -82,7 +82,7 @@ public class TestTranslators {
 
         Operation add = simple.addConstraint(OperationKind.NEQUALS,a,b);
 
-        logger.info("Test S3");
+        LOGGER.info("Test S3");
         SmtTranslator sa = OutputFormat.S3.getTranslator();
         try {
             sa.setConstraintNetwork(simple);
@@ -96,14 +96,14 @@ public class TestTranslators {
             e.printStackTrace();
         }
 
-        logger.info(out);
+        LOGGER.info(out);
 
     }
 
     @Test
     public void testCVC4() {
 
-        logger.info("Test CVC4");
+        LOGGER.info("Test CVC4");
         SmtTranslator sa = OutputFormat.CVC4.getTranslator();
         try {
             sa.setConstraintNetwork(cn);
@@ -118,7 +118,7 @@ public class TestTranslators {
         }
 
 
-        logger.info(out);
+        LOGGER.info(out);
 
     }
 
@@ -126,17 +126,17 @@ public class TestTranslators {
     @Test
     public void testCVC4Splitter() {
 
-        logger.info("Test CVC4");
+        LOGGER.info("Test CVC4");
 
         String test =  ".*' +[Oo][Rr] +'";
 
         Ast a = new RegexParser().parse(test);
 
-        logger.info(a.toDot());
+        LOGGER.info(a.toDot());
         CVC4RegexSplitter splitter = new CVC4RegexSplitter(a);
         String out = splitter.process();
-        logger.info(a.toDot());
-        logger.info(out);
+        LOGGER.info(a.toDot());
+        LOGGER.info(out);
 
     }
 
@@ -158,7 +158,7 @@ public class TestTranslators {
         tm.addConstraint(OperationKind.STR_NEQUALS,v1,v2);
         tm.addConstraint(OperationKind.MATCHES, x, orv1compv2);
 
-        logger.info(tm.toDot());
+        LOGGER.info(tm.toDot());
 
         SmtTranslator sa = OutputFormat.CVC4.getTranslator();
         try {
@@ -174,7 +174,7 @@ public class TestTranslators {
             e.printStackTrace();
         }
 
-        logger.info(out);
+        LOGGER.info(out);
     }
 
     @Test
@@ -225,7 +225,7 @@ public class TestTranslators {
             e.printStackTrace();
         }
 
-        logger.info(out);
+        LOGGER.info(out);
     }
 
     @Test
@@ -234,7 +234,7 @@ public class TestTranslators {
 
         String s2 = CVC4Escape.escapeSpecialCharacters(s);
 
-        logger.info(s2);
+        LOGGER.info(s2);
 
     }
 
@@ -244,7 +244,7 @@ public class TestTranslators {
 
         String s2 = SmtEscape.trimQuotes(s);
 
-        logger.info(s2);
+        LOGGER.info(s2);
 
     }
 
@@ -252,7 +252,7 @@ public class TestTranslators {
     @Test
     public void testZ3Splitter1() {
 
-        logger.info("Test Z3");
+        LOGGER.info("Test Z3");
 
         String test =  ".*(\\<((! *- *-)?|( *- *-)?\\>)|\\< *CDATA\\[\\[.*\\]\\] *\\>).";
 
@@ -260,12 +260,12 @@ public class TestTranslators {
         Ast regex = rp.parse(test);
         //Ast a = RegexParser.getInstance().parse(test);
 
-        logger.info(regex.toDot());
+        LOGGER.info(regex.toDot());
 
         Z3RegexSplitter splitter = new Z3RegexSplitter(regex);
         splitter.process();
         String out = splitter.getResult();
-        logger.info(out);
+        LOGGER.info(out);
 
     }
 
@@ -274,17 +274,17 @@ public class TestTranslators {
         String xss = "\\< *[Ss] *\\>[a-z]";
         RegexParser rp = new RegexParser();
         Ast regex = rp.parse(xss);
-        logger.info(regex.toDot());
+        LOGGER.info(regex.toDot());
         Z3RegexSplitter splitter = new Z3RegexSplitter(regex);
         splitter.process();
         String out = splitter.getResult();
-        logger.info(out);
+        LOGGER.info(out);
 
     }
     @Test
     public void testS3Splitter1() {
 
-        logger.info("Test S3");
+        LOGGER.info("Test S3");
 
         String test =  ".*(\\<((! *- *-)?|( *- *-)?\\>)|\\< *CDATA\\[\\[.*\\]\\] *\\>).";
 
@@ -292,12 +292,12 @@ public class TestTranslators {
         Ast regex = rp.parse(test);
         //Ast a = RegexParser.getInstance().parse(test);
 
-        logger.info(regex.toDot());
+        LOGGER.info(regex.toDot());
 
         S3RegexSplitter splitter = new S3RegexSplitter(regex);
         String out = splitter.process();
         splitter.getResult();
-        logger.info(out);
+        LOGGER.info(out);
 
     }
 
@@ -314,7 +314,7 @@ public class TestTranslators {
     @Test
     public void testS3Splitter2() {
 
-        logger.info("Test S3");
+        LOGGER.info("Test S3");
 
         RegexParser rp = new RegexParser();
         Ast regex = rp.parse(xss);
@@ -323,20 +323,20 @@ public class TestTranslators {
         S3RegexSplitter splitter = new S3RegexSplitter(regex);
         String out = splitter.process();
         splitter.getResult();
-        logger.info(out);
+        LOGGER.info(out);
         //LOGGER.info(regex.toDot());
 
     }
 
     @Test
     public void testApp() {
-        logger.info("test app");
+        LOGGER.info("test app");
         Pattern p = Pattern.compile("[0-9A-Z0-9]{3}\\-[0-9A-Z0-9]{3}\\-([0-9A-Z0-9\\-]+)");
 
         Matcher m = p.matcher("APP-WIX-51515");
 
         if(m.matches())
-            logger.info(m.group(1));
+            LOGGER.info(m.group(1));
 
     }
 

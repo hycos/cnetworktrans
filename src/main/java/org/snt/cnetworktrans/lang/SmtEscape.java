@@ -28,7 +28,7 @@ import java.util.Set;
 
 public class SmtEscape {
 
-    final static Logger logger = LoggerFactory.getLogger(SmtEscape.class);
+    final static Logger LOGGER = LoggerFactory.getLogger(SmtEscape.class);
 
 
     public static String trimQuotes(String s) {

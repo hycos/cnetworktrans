@@ -16,12 +16,12 @@ import java.util.Stack;
 
 public class S3Translator extends SmtTranslator {
 
-    final static Logger logger = LoggerFactory.getLogger(S3Translator.class);
+    final static Logger LOGGER = LoggerFactory.getLogger(S3Translator.class);
 
     @Override
     public String translate() throws NotSupportedException {
 
-        logger.info("Translate to S3");
+        LOGGER.info("Translate to S3");
 
         StringBuilder finalOut = new StringBuilder();
 
@@ -206,7 +206,7 @@ public class S3Translator extends SmtTranslator {
 
     @Override
     public String translateRegex(Node n) {
-        logger.info(" translate regex " + n.getLabel());
+        LOGGER.info(" translate regex " + n.getLabel());
 
         //Ast regex = RegexParser.getInstance().parse(n.getLabel());
         RegexParser rp = new RegexParser();

@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
 
 public class Z3RegexSplitter extends RegexSplitter {
 
-    final static Logger logger = LoggerFactory.getLogger(Z3RegexSplitter.class);
+    final static Logger LOGGER = LoggerFactory.getLogger(Z3RegexSplitter.class);
 
     private static String CONCAT = "RegexConcat";
     private static String PLUS = "RegexPlus";
@@ -43,7 +43,7 @@ public class Z3RegexSplitter extends RegexSplitter {
     @Override
     protected void process(AstNode n) {
 
-        logger.info("Handle " + n.getId() + " " + n.getRule());
+        LOGGER.info("Handle " + n.getId() + " " + n.getRule());
         switch (n.getRule()) {
             case "root":
                 simpleProp(n);
@@ -89,11 +89,11 @@ public class Z3RegexSplitter extends RegexSplitter {
                     String lbl = last.getLabel();
 
                     if (last != null && last.getRule().equals("quantifier")) {
-                        logger.info("QUANTIFIER " + lbl);
+                        LOGGER.info("QUANTIFIER " + lbl);
                         switch (lbl) {
                             case "*":
                                 String star = "(" + STAR + " " + smap.get(first) + " )";
-                                logger.info("STAR " + star);
+                                LOGGER.info("STAR " + star);
                                 smap.put(n,star);
                                 break;
                             case "+":
@@ -152,7 +152,7 @@ public class Z3RegexSplitter extends RegexSplitter {
                             //smap.put(n, var);
 
                             smap.put(n, sran);
-                            logger.info("min " + min + " max" + max);
+                            LOGGER.info("min " + min + " max" + max);
                         }
                     }
                 }
@@ -205,7 +205,7 @@ public class Z3RegexSplitter extends RegexSplitter {
                 break;
         }
 
-        //logger.info(debug());
+        //LOGGER.info(debug());
     }
 
     private String esc(String s) {

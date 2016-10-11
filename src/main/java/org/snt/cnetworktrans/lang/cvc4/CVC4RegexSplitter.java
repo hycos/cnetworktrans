@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
 
 public class CVC4RegexSplitter extends RegexSplitter {
 
-    final static Logger logger = LoggerFactory.getLogger(CVC4RegexSplitter.class);
+    final static Logger LOGGER = LoggerFactory.getLogger(CVC4RegexSplitter.class);
 
     private static String CONCAT = "re.++";
     private static String PLUS = "re.+";
@@ -34,7 +34,7 @@ public class CVC4RegexSplitter extends RegexSplitter {
     @Override
     protected void process(AstNode n) {
 
-        logger.info("Handle " + n.getId() + " " + n.getRule());
+        LOGGER.info("Handle " + n.getId() + " " + n.getRule());
 
         switch (n.getRule()) {
 
@@ -79,8 +79,8 @@ public class CVC4RegexSplitter extends RegexSplitter {
                     AstNode last = n.getChildren().get(1);
                     AstNode first = n.getChildren().get(0);
 
-                    logger.info("FIRST " + first.getEscapedLabel() + ">> " + first.getId() + " " + smap.get(first));
-                    logger.info("LAST " + last.getEscapedLabel() + ">> " + last.getId() + " " + smap.get(last));
+                    LOGGER.info("FIRST " + first.getEscapedLabel() + ">> " + first.getId() + " " + smap.get(first));
+                    LOGGER.info("LAST " + last.getEscapedLabel() + ">> " + last.getId() + " " + smap.get(last));
 
                     if (last != null && last.getRule().equals("quantifier")) {
                         switch (last.getLabel()) {
@@ -149,7 +149,7 @@ public class CVC4RegexSplitter extends RegexSplitter {
                             //smap.put(n, var);
 
                             smap.put(n, sran);
-                            logger.info("min " + min + " max" + max);
+                            LOGGER.info("min " + min + " max" + max);
                         }
                     }
                 }

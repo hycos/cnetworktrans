@@ -19,7 +19,7 @@ public abstract class SmtTranslator {
     protected Stack<NetworkEntity.NetworkEntityKind> ctx;
 
 
-    final static Logger logger = LoggerFactory.getLogger(SmtTranslator.class);
+    final static Logger LOGGER = LoggerFactory.getLogger(SmtTranslator.class);
 
     public SmtTranslator() {
         this.vresolv = new HashMap<Node, String>();
@@ -29,7 +29,7 @@ public abstract class SmtTranslator {
 
     public void init() {
         for(Node n : this.cn.vertexSet()) {
-            logger.info("Node " + n.getLabel());
+            LOGGER.info("Node " + n.getLabel());
             if(n.isLiteral() || n.isRegex() || n.isOperand()) {
                 this.vresolv.put(n, n.getLabel());
             }
@@ -53,7 +53,7 @@ public abstract class SmtTranslator {
     }
 
     protected void backtrack(Node n) throws NotSupportedException {
-        logger.debug("backtrack " + n.getLabel());
+        LOGGER.debug("backtrack " + n.getLabel());
         ctxPush(n);
 
         if (n.isRegex()) {
@@ -116,11 +116,11 @@ public abstract class SmtTranslator {
 
     protected void debug() {
 
-        logger.info("RESOLVE: =================================\n");
+        LOGGER.info("RESOLVE: =================================\n");
         for (Map.Entry<Node, String> e : vresolv.entrySet()) {
-            logger.info(e.getKey().getId() + " :: " + e.getValue());
+            LOGGER.info(e.getKey().getId() + " :: " + e.getValue());
         }
-        logger.info("\n=========================================\n");
+        LOGGER.info("\n=========================================\n");
     }
 
     public void setConstraintNetwork(ConstraintNetwork cn) throws NotSupportedException{
@@ -172,7 +172,7 @@ public abstract class SmtTranslator {
         for(Node n : cn.vertexSet()) {
             if(n.isOperation()) {
                 if(notTranslatable((Operation)n)) {
-                    logger.info("op " + n.getKind());
+                    LOGGER.info("op " + n.getKind());
                     return false;
                 }
             }

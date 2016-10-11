@@ -16,7 +16,7 @@ import java.util.Set;
 
 public class RegexParser {
 
-    final static Logger logger = LoggerFactory.getLogger(RegexParser.class);
+    final static Logger LOGGER = LoggerFactory.getLogger(RegexParser.class);
 
 
     private static Set<String> filter  = new HashSet<String>(Arrays.asList(new String []{ "alternation", "expr", "literal",
@@ -45,12 +45,12 @@ public class RegexParser {
         gp.setListener(rl);
 
         gp.compile();
-        logger.info("Parse regex " + regex);
+        LOGGER.info("Parse regex " + regex);
 
         try {
             gp.parse(regex);
         } catch (IllegalWorkflowException e) {
-            logger.error("error parsing regular expression");
+            LOGGER.error("error parsing regular expression");
             System.exit(-1);
         }
         return rl.getAst();

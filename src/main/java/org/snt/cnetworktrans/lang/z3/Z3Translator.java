@@ -16,12 +16,12 @@ import java.util.Stack;
 
 public class Z3Translator extends SmtTranslator {
 
-    final static Logger logger = LoggerFactory.getLogger(Z3Translator.class);
+    final static Logger LOGGER = LoggerFactory.getLogger(Z3Translator.class);
 
     @Override
     public String translate() throws NotSupportedException {
 
-        logger.info("Translate to Z3");
+        LOGGER.info("Translate to Z3");
 
         StringBuilder finalOut = new StringBuilder();
 
@@ -206,7 +206,7 @@ public class Z3Translator extends SmtTranslator {
 
     @Override
     public String translateRegex(Node n) {
-        logger.info(" translate regex " + n.getLabel());
+        LOGGER.info(" translate regex " + n.getLabel());
         RegexParser rp = new RegexParser();
         Ast regex = rp.parse(SmtEscape.trimQuotes(n.getLabel()));
 

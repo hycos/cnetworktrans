@@ -28,7 +28,7 @@ import java.util.Set;
 
 public class CVC4Escape {
 
-    final static Logger logger = LoggerFactory.getLogger(CVC4Escape.class);
+    final static Logger LOGGER = LoggerFactory.getLogger(CVC4Escape.class);
 
     private static Character[] sarray = new Character[]{'+', '{', '}', '(', ')', '[', ']', '&', '^', '-', '?', '*', '\"', '$', '<', '>', '.', '|', '#'};
     private static Set<Character> special = new HashSet<Character>(Arrays.asList(sarray));
