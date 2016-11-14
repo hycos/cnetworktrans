@@ -91,6 +91,12 @@
             <version>1.0</version>
         </dependency>
     </dependencies>
+    <repositories>
+        <repository>
+            <id>mydav</id>
+            <url>dav:http://127.0.0.1:8888/webdav/maven2</url>
+        </repository>
+    </repositories>
     <distributionManagement>
         <repository>
             <id>mydav</id>
