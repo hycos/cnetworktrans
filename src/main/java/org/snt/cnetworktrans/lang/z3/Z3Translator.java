@@ -110,6 +110,12 @@ public class Z3Translator extends SmtTranslator {
             case AND:
                 ret.push("and");
                 break;
+            case INDEXOF:
+                ret.push("indexof");
+                break;
+            case IMPLIES:
+                ret.push("implies");
+                break;
 
             case NEQUALS:
             case BOOL_NEQUALS:
