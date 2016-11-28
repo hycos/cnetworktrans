@@ -4,7 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.snt.cnetwork.core.Operation;
 import org.snt.cnetwork.core.Node;
-import org.snt.cnetwork.core.range.BooleanRange;
+import org.snt.cnetwork.core.domain.BooleanRange;
+import org.snt.cnetwork.core.domain.Range;
 import org.snt.cnetworktrans.core.RegexParser;
 import org.snt.cnetworktrans.exceptions.NotSupportedException;
 import org.snt.cnetworktrans.lang.SmtEscape;
@@ -121,8 +122,9 @@ public class Z3Translator extends SmtTranslator {
             case BOOL_NEQUALS:
             case STR_NEQUALS:
             case NUM_NEQUALS:
-                assert (op.getRange() instanceof BooleanRange);
-                BooleanRange br0 = (BooleanRange) op.getRange();
+                Range r0 = (Range)op.getDomain(0).getDomain("range");
+                assert (r0 instanceof BooleanRange);
+                BooleanRange br0 = (BooleanRange) r0;
                 ret.push("=");
                 if (br0.isAlwaysTrue()) {
                     ret.push("not");
@@ -132,9 +134,10 @@ public class Z3Translator extends SmtTranslator {
             case STR_EQUALS:
             case NUM_EQUALS:
             case EQUALS:
-                assert (op.getRange() instanceof BooleanRange);
+                Range r1 = (Range)op.getDomain(0).getDomain("range");
+                assert (r1 instanceof BooleanRange);
                 ret.push("=");
-                BooleanRange br1 = (BooleanRange) op.getRange();
+                BooleanRange br1 = (BooleanRange) r1;
                 if (br1.isAlwaysFalse()) {
                     ret.push("not");
                 }

@@ -28,26 +28,26 @@ public class TestTranslators {
     public void setUp() throws Exception {
         cn = new ConstraintNetwork();
 
-        Operand a = new Operand("a", OperandKind.NUMVAR);
-        Operand b = new Operand("b", OperandKind.NUMVAR);
-        Operand c = new Operand("20", OperandKind.NUMLIT);
+        Operand a = new Operand("a", NodeKind.NUMVAR);
+        Operand b = new Operand("b", NodeKind.NUMVAR);
+        Operand c = new Operand("20", NodeKind.NUMLIT);
 
-        Operation add = cn.addOperation(OperationKind.ADD,a,b);
-        Operation smeq = cn.addConstraint(OperationKind.SMALLEREQ, add, c);
+        Operation add = cn.addOperation(NodeKind.ADD,a,b);
+        Operation smeq = cn.addConstraint(NodeKind.SMALLEREQ, add, c);
 
 
-        Operand s = new Operand("s1", OperandKind.STRVAR);
-        Operand ip = new Operand("a*", OperandKind.STRREXP);
+        Operand s = new Operand("s1", NodeKind.STRVAR);
+        Operand ip = new Operand("a*", NodeKind.STRREXP);
 
-        Operation matches = cn.addConstraint(OperationKind.MATCHES, s, ip);
+        Operation matches = cn.addConstraint(NodeKind.MATCHES, s, ip);
 
-        Operation len = cn.addOperation(OperationKind.LEN,s);
+        Operation len = cn.addOperation(NodeKind.LEN,s);
 
-        Operation lencon = cn.addConstraint(OperationKind.GREATEREQ, len, c);
+        Operation lencon = cn.addConstraint(NodeKind.GREATEREQ, len, c);
 
-        Operation conv = cn.addOperation(OperationKind.TOSTR, a);
+        Operation conv = cn.addOperation(NodeKind.TOSTR, a);
 
-        Operation matches2 = cn.addConstraint(OperationKind.MATCHES, s, conv);
+        Operation matches2 = cn.addConstraint(NodeKind.MATCHES, s, conv);
     }
 
 
@@ -77,10 +77,10 @@ public class TestTranslators {
 
         ConstraintNetwork simple = new ConstraintNetwork();
 
-        Operand a = new Operand("a", OperandKind.STRVAR);
-        Operand b = new Operand("b", OperandKind.STRVAR);
+        Operand a = new Operand("a", NodeKind.STRVAR);
+        Operand b = new Operand("b", NodeKind.STRVAR);
 
-        Operation add = simple.addConstraint(OperationKind.NEQUALS,a,b);
+        Operation add = simple.addConstraint(NodeKind.NEQUALS,a,b);
 
         LOGGER.info("Test S3");
         SmtTranslator sa = OutputFormat.S3.getTranslator();
@@ -146,17 +146,17 @@ public class TestTranslators {
 
         ConstraintNetwork tm = new ConstraintNetwork();
 
-        Node x = new Operand("x", OperandKind.STRVAR);
-        Node or = new Operand(".*' +[Oo][Rr] +'", OperandKind.STRREXP);
-        Node v1 = new Operand("sv1", OperandKind.STRVAR);
-        Node orv1 = tm.addOperation(OperationKind.CONCAT, or, v1);
-        Node eq = new Operand("'.*=.*'", OperandKind.STRREXP);
-        Node v2 = new Operand("sv2", OperandKind.STRVAR);
-        Node orv1comp = tm.addOperation(OperationKind.CONCAT, eq, v2);
-        Node orv1compv2 = tm.addOperation(OperationKind.CONCAT, orv1, orv1comp);
+        Node x = new Operand("x", NodeKind.STRVAR);
+        Node or = new Operand(".*' +[Oo][Rr] +'", NodeKind.STRREXP);
+        Node v1 = new Operand("sv1", NodeKind.STRVAR);
+        Node orv1 = tm.addOperation(NodeKind.CONCAT, or, v1);
+        Node eq = new Operand("'.*=.*'", NodeKind.STRREXP);
+        Node v2 = new Operand("sv2", NodeKind.STRVAR);
+        Node orv1comp = tm.addOperation(NodeKind.CONCAT, eq, v2);
+        Node orv1compv2 = tm.addOperation(NodeKind.CONCAT, orv1, orv1comp);
 
-        tm.addConstraint(OperationKind.STR_NEQUALS,v1,v2);
-        tm.addConstraint(OperationKind.MATCHES, x, orv1compv2);
+        tm.addConstraint(NodeKind.STR_NEQUALS,v1,v2);
+        tm.addConstraint(NodeKind.MATCHES, x, orv1compv2);
 
         LOGGER.info(tm.toDot());
 
@@ -181,35 +181,35 @@ public class TestTranslators {
     public void testCVC4Translator2() {
 
         ConstraintNetwork tm2 = new ConstraintNetwork();
-        Node x = new Operand("x", OperandKind.STRVAR);
+        Node x = new Operand("x", NodeKind.STRVAR);
         String sor = ".*' +[Oo][Rr] +'";
-        Node or = new Operand(sor, OperandKind.STRREXP);
+        Node or = new Operand(sor, NodeKind.STRREXP);
 
-        Node v1 = new Operand("sv7", OperandKind.NUMVAR);
+        Node v1 = new Operand("sv7", NodeKind.NUMVAR);
 
-        Node toStrV1 = tm2.addOperation(OperationKind.TOSTR, v1);
+        Node toStrV1 = tm2.addOperation(NodeKind.TOSTR, v1);
 
-        Node orv1 = tm2.addOperation(OperationKind.CONCAT, or, toStrV1);
+        Node orv1 = tm2.addOperation(NodeKind.CONCAT, or, toStrV1);
 
-        Node eq = new Operand(" +\\>= +", OperandKind.STRREXP);
+        Node eq = new Operand(" +\\>= +", NodeKind.STRREXP);
 
-        Node orv1comp = tm2.addOperation(OperationKind.CONCAT, orv1, eq);
+        Node orv1comp = tm2.addOperation(NodeKind.CONCAT, orv1, eq);
 
-        Node v2 = new Operand("sv8", OperandKind.NUMVAR);
+        Node v2 = new Operand("sv8", NodeKind.NUMVAR);
 
-        Node toStrV2 = tm2.addOperation(OperationKind.TOSTR, v2);
+        Node toStrV2 = tm2.addOperation(NodeKind.TOSTR, v2);
 
-        Node orv1compv2 = tm2.addOperation(OperationKind.CONCAT, orv1comp, toStrV2);
+        Node orv1compv2 = tm2.addOperation(NodeKind.CONCAT, orv1comp, toStrV2);
 
         String scomment = "(\\<!\\-\\-|#)";
-        Node comment = new Operand(scomment, OperandKind.STRREXP);
+        Node comment = new Operand(scomment, NodeKind.STRREXP);
 
-        tm2.addOperation(OperationKind.CONCAT,orv1compv2,comment);
+        tm2.addOperation(NodeKind.CONCAT,orv1compv2,comment);
 
-        tm2.addConstraint(OperationKind.GREATEREQ, v1,v2);
+        tm2.addConstraint(NodeKind.GREATEREQ, v1,v2);
 
         tm2.setStartNode(orv1compv2);
-        tm2.addConstraint(OperationKind.MATCHES, x, orv1compv2);
+        tm2.addConstraint(NodeKind.MATCHES, x, orv1compv2);
 
         SmtTranslator sa = OutputFormat.CVC4.getTranslator();
         try {

@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.snt.cnetwork.core.*;
+import org.snt.cnetwork.core.domain.NumRange;
 import org.snt.cnetworktrans.exceptions.NotSupportedException;
 
 import java.util.HashMap;
@@ -16,7 +17,7 @@ public abstract class SmtTranslator {
     protected ConstraintNetwork cn = null;
     protected Map<Node, String> vresolv = null;
     protected Map<Node, String> vdecl = null;
-    protected Stack<NetworkEntity.NetworkEntityKind> ctx;
+    protected Stack<NodeKind> ctx;
 
 
     final static Logger LOGGER = LoggerFactory.getLogger(SmtTranslator.class);
@@ -24,7 +25,7 @@ public abstract class SmtTranslator {
     public SmtTranslator() {
         this.vresolv = new HashMap<Node, String>();
         this.vdecl = new HashMap<Node, String>();
-        this.ctx = new Stack<NetworkEntity.NetworkEntityKind>();
+        this.ctx = new Stack<NodeKind>();
     }
 
     public void init() {
@@ -144,8 +145,13 @@ public abstract class SmtTranslator {
             Operand operand = (Operand) op;
 
             String lbl = "";
-            long max = operand.getRange().getMax();
-            if (operand.getRange().getMax() < 0) {
+
+            //@TODO:Julian fix this -- we have to assume +1 dsize
+            NumRange nr = (NumRange) operand.getDomain(0).getDomain
+                    ("range");
+
+            long max = nr.getMax();
+            if (nr.getMax() < 0) {
                 lbl = "(- " + (-max) + ")";
             } else {
                 lbl = String.valueOf(max);
