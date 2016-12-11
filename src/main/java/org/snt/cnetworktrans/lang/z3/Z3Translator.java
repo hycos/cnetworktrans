@@ -122,7 +122,7 @@ public class Z3Translator extends SmtTranslator {
             case BOOL_NEQUALS:
             case STR_NEQUALS:
             case NUM_NEQUALS:
-                Range r0 = (Range)op.getDomain(0).getDomain("range");
+                Range r0 = (Range)op.getRange();
                 assert (r0 instanceof BooleanRange);
                 BooleanRange br0 = (BooleanRange) r0;
                 ret.push("=");
@@ -134,7 +134,7 @@ public class Z3Translator extends SmtTranslator {
             case STR_EQUALS:
             case NUM_EQUALS:
             case EQUALS:
-                Range r1 = (Range)op.getDomain(0).getDomain("range");
+                Range r1 = (Range)op.getRange();
                 assert (r1 instanceof BooleanRange);
                 ret.push("=");
                 BooleanRange br1 = (BooleanRange) r1;

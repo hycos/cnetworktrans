@@ -147,8 +147,7 @@ public abstract class SmtTranslator {
             String lbl = "";
 
             //@TODO:Julian fix this -- we have to assume +1 dsize
-            NumRange nr = (NumRange) operand.getDomain(0).getDomain
-                    ("range");
+            NumRange nr = (NumRange) operand.getRange();
 
             long max = nr.getMax();
             if (nr.getMax() < 0) {
