@@ -23,9 +23,9 @@ public abstract class SmtTranslator {
     final static Logger LOGGER = LoggerFactory.getLogger(SmtTranslator.class);
 
     public SmtTranslator() {
-        this.vresolv = new HashMap<Node, String>();
-        this.vdecl = new HashMap<Node, String>();
-        this.ctx = new Stack<NodeKind>();
+        this.vresolv = new HashMap<>();
+        this.vdecl = new HashMap<>();
+        this.ctx = new Stack<>();
     }
 
     public void init() {

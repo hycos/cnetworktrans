@@ -41,7 +41,7 @@ public class RegexParser {
     public static Ast parse(String regex) {
 
 
-        GenericParser gp = new GenericParser(grammar, "Regex");
+        GenericParser gp = new GenericParser(grammar);
 
         DefaultTreeListener rl = new DefaultTreeListener(s -> filter.contains(s));
         gp.setListener(rl);
