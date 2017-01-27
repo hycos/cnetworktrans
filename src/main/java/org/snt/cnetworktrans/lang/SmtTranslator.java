@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.snt.cnetwork.core.*;
+import org.snt.cnetwork.core.domain.NumCut;
 import org.snt.cnetwork.core.domain.NumRange;
 import org.snt.cnetworktrans.exceptions.NotSupportedException;
 
@@ -149,9 +150,9 @@ public abstract class SmtTranslator {
             //@TODO:Julian fix this -- we have to assume +1 dsize
             NumRange nr = (NumRange) operand.getRange();
 
-            long max = nr.getMax();
-            if (nr.getMax() < 0) {
-                lbl = "(- " + (-max) + ")";
+            NumCut max = nr.getMax();
+            if (nr.getMax().isSmallerThan(0L)) {
+                lbl = "(- " + (-nr.getMax().getEndpoint()) + ")";
             } else {
                 lbl = String.valueOf(max);
             }
