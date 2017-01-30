@@ -1,3 +1,4 @@
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -12,6 +13,7 @@ import org.snt.cnetworktrans.lang.cvc4.CVC4Escape;
 import org.snt.cnetworktrans.lang.cvc4.CVC4RegexSplitter;
 import org.snt.cnetworktrans.lang.s3.S3RegexSplitter;
 import org.snt.cnetworktrans.lang.z3.Z3RegexSplitter;
+import org.snt.inmemantlr.exceptions.AstProcessorException;
 import org.snt.inmemantlr.tree.Ast;
 
 import java.util.regex.Matcher;
@@ -92,9 +94,10 @@ public class TestTranslators {
         String out = null;
         try {
             out = sa.translate();
-        } catch (NotSupportedException e) {
-            e.printStackTrace();
+        } catch (NotSupportedException | AstProcessorException e) {
+            Assert.assertFalse(true);
         }
+
 
         LOGGER.info(out);
 
@@ -113,9 +116,10 @@ public class TestTranslators {
         String out = null;
         try {
             out = sa.translate();
-        } catch (NotSupportedException e) {
-            e.printStackTrace();
+        } catch (NotSupportedException | AstProcessorException e) {
+            Assert.assertFalse(true);
         }
+
 
 
         LOGGER.info(out);
@@ -134,7 +138,12 @@ public class TestTranslators {
 
         LOGGER.info(a.toDot());
         CVC4RegexSplitter splitter = new CVC4RegexSplitter(a);
-        String out = splitter.process();
+        String out = null;
+        try {
+            out = splitter.process();
+        } catch (AstProcessorException e) {
+            Assert.assertFalse(true);
+        }
         LOGGER.info(a.toDot());
         LOGGER.info(out);
 
@@ -169,9 +178,8 @@ public class TestTranslators {
         String out = "" ;
         try {
             out = sa.translate();
-
-        } catch (NotSupportedException e) {
-            e.printStackTrace();
+        } catch (NotSupportedException | AstProcessorException e) {
+            Assert.assertFalse(true);
         }
 
         LOGGER.info(out);
@@ -220,10 +228,10 @@ public class TestTranslators {
         String out = "" ;
         try {
             out = sa.translate();
-
-        } catch (NotSupportedException e) {
-            e.printStackTrace();
+        } catch (NotSupportedException | AstProcessorException e) {
+            Assert.assertFalse(true);
         }
+
 
         LOGGER.info(out);
     }
@@ -263,7 +271,11 @@ public class TestTranslators {
         LOGGER.info(regex.toDot());
 
         Z3RegexSplitter splitter = new Z3RegexSplitter(regex);
-        splitter.process();
+        try {
+            splitter.process();
+        } catch (AstProcessorException e) {
+            Assert.assertFalse(true);
+        }
         String out = splitter.getResult();
         LOGGER.info(out);
 
@@ -276,7 +288,11 @@ public class TestTranslators {
         Ast regex = rp.parse(xss);
         LOGGER.info(regex.toDot());
         Z3RegexSplitter splitter = new Z3RegexSplitter(regex);
-        splitter.process();
+        try {
+            splitter.process();
+        } catch (AstProcessorException e) {
+            Assert.assertFalse(true);
+        }
         String out = splitter.getResult();
         LOGGER.info(out);
 
@@ -295,7 +311,12 @@ public class TestTranslators {
         LOGGER.info(regex.toDot());
 
         S3RegexSplitter splitter = new S3RegexSplitter(regex);
-        String out = splitter.process();
+        String out = null;
+        try {
+            out = splitter.process();
+        } catch (AstProcessorException e) {
+            Assert.assertFalse(true);
+        }
         splitter.getResult();
         LOGGER.info(out);
 
@@ -321,7 +342,12 @@ public class TestTranslators {
         //Ast a = RegexParser.getInstance().parse(test);
 
         S3RegexSplitter splitter = new S3RegexSplitter(regex);
-        String out = splitter.process();
+        String out = null;
+        try {
+            out = splitter.process();
+        } catch (AstProcessorException e) {
+            Assert.assertFalse(true);
+        }
         splitter.getResult();
         LOGGER.info(out);
         //LOGGER.info(regex.toDot());

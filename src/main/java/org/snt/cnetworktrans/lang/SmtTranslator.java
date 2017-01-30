@@ -7,6 +7,7 @@ import org.snt.cnetwork.core.*;
 import org.snt.cnetwork.core.domain.NumCut;
 import org.snt.cnetwork.core.domain.NumRange;
 import org.snt.cnetworktrans.exceptions.NotSupportedException;
+import org.snt.inmemantlr.exceptions.AstProcessorException;
 
 import java.util.HashMap;
 import java.util.List;
@@ -38,7 +39,7 @@ public abstract class SmtTranslator {
         }
     }
 
-    protected void doBacktrack(Node n) throws NotSupportedException {
+    protected void doBacktrack(Node n) throws NotSupportedException, AstProcessorException {
         // we have to do it twice -- some functions need their params
         // to be converted
         backtrack(n);
@@ -54,7 +55,7 @@ public abstract class SmtTranslator {
             this.ctx.pop();
     }
 
-    protected void backtrack(Node n) throws NotSupportedException {
+    protected void backtrack(Node n) throws NotSupportedException, AstProcessorException {
         LOGGER.debug("backtrack " + n.getLabel());
         ctxPush(n);
 
@@ -133,7 +134,7 @@ public abstract class SmtTranslator {
         init();
     }
 
-    public abstract String translate() throws NotSupportedException;
+    public abstract String translate() throws NotSupportedException, AstProcessorException;
 
     public abstract Stack<String> getOperationTrans(Node op) throws NotSupportedException;
 
@@ -186,7 +187,7 @@ public abstract class SmtTranslator {
         return true;
     }
 
-    protected abstract String translateRegex(Node regex);
+    protected abstract String translateRegex(Node regex) throws AstProcessorException;
 
     protected abstract String esc(String s);
 

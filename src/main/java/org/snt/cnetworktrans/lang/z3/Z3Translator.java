@@ -2,14 +2,15 @@ package org.snt.cnetworktrans.lang.z3;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.snt.cnetwork.core.Operation;
 import org.snt.cnetwork.core.Node;
+import org.snt.cnetwork.core.Operation;
 import org.snt.cnetwork.core.domain.BooleanRange;
 import org.snt.cnetwork.core.domain.Range;
 import org.snt.cnetworktrans.core.RegexParser;
 import org.snt.cnetworktrans.exceptions.NotSupportedException;
 import org.snt.cnetworktrans.lang.SmtEscape;
 import org.snt.cnetworktrans.lang.SmtTranslator;
+import org.snt.inmemantlr.exceptions.AstProcessorException;
 import org.snt.inmemantlr.tree.Ast;
 
 import java.util.Stack;
@@ -20,7 +21,7 @@ public class Z3Translator extends SmtTranslator {
     final static Logger LOGGER = LoggerFactory.getLogger(Z3Translator.class);
 
     @Override
-    public String translate() throws NotSupportedException {
+    public String translate() throws NotSupportedException, AstProcessorException {
 
         LOGGER.info("Translate to Z3");
 
@@ -214,13 +215,15 @@ public class Z3Translator extends SmtTranslator {
     }
 
     @Override
-    public String translateRegex(Node n) {
+    public String translateRegex(Node n) throws AstProcessorException {
         LOGGER.info(" translate regex " + n.getLabel());
         RegexParser rp = new RegexParser();
         Ast regex = rp.parse(SmtEscape.trimQuotes(n.getLabel()));
 
         Z3RegexSplitter splitter = new Z3RegexSplitter(regex);
+
         return splitter.process();
+
     }
 
     @Override

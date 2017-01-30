@@ -3,6 +3,7 @@ package org.snt.cnetworktrans.core;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.snt.inmemantlr.GenericParser;
+import org.snt.inmemantlr.exceptions.CompilationException;
 import org.snt.inmemantlr.exceptions.IllegalWorkflowException;
 import org.snt.inmemantlr.listener.DefaultTreeListener;
 import org.snt.inmemantlr.tree.Ast;
@@ -38,7 +39,7 @@ public class RegexParser {
         }
     }
 
-    public static Ast parse(String regex) {
+    public static Ast parse(String regex)  {
 
 
         GenericParser gp = new GenericParser(grammar);
@@ -46,7 +47,11 @@ public class RegexParser {
         DefaultTreeListener rl = new DefaultTreeListener(s -> filter.contains(s));
         gp.setListener(rl);
 
-        gp.compile();
+        try {
+            gp.compile();
+        } catch (CompilationException e) {
+            assert false; // should never ever happen
+        }
         LOGGER.info("Parse regex " + regex);
 
         try {

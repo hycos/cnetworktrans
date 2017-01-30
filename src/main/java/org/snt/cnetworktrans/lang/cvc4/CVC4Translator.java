@@ -12,6 +12,7 @@ import org.snt.cnetworktrans.core.RegexParser;
 import org.snt.cnetworktrans.exceptions.NotSupportedException;
 import org.snt.cnetworktrans.lang.SmtEscape;
 import org.snt.cnetworktrans.lang.SmtTranslator;
+import org.snt.inmemantlr.exceptions.AstProcessorException;
 import org.snt.inmemantlr.tree.Ast;
 
 import java.util.List;
@@ -38,7 +39,7 @@ public class CVC4Translator extends SmtTranslator {
 
 
     @Override
-    public String translate() throws NotSupportedException {
+    public String translate() throws NotSupportedException, AstProcessorException {
         StringBuilder finalOut = new StringBuilder();
         LOGGER.debug("translate");
 
@@ -290,7 +291,7 @@ public class CVC4Translator extends SmtTranslator {
 
 
     @Override
-    protected String translateRegex(Node n) {
+    protected String translateRegex(Node n) throws AstProcessorException {
 
         assert(n.isRegex());
         //Ast regex = RegexParser.getInstance().parse(n.getLabel());
