@@ -16,7 +16,7 @@ import java.util.Stack;
 
 public abstract class SmtTranslator {
 
-    protected ConstraintNetwork cn = null;
+    protected ConstraintNetworkBuilder cn = null;
     protected Map<Node, String> vresolv = null;
     protected Map<Node, String> vdecl = null;
     protected Stack<NodeKind> ctx;
@@ -126,7 +126,8 @@ public abstract class SmtTranslator {
         LOGGER.info("\n=========================================\n");
     }
 
-    public void setConstraintNetwork(ConstraintNetwork cn) throws NotSupportedException{
+    public void setConstraintNetworkBuilder(ConstraintNetworkBuilder cn) throws
+            NotSupportedException{
         if(!isTranslatable(cn)) {
             throw new NotSupportedException("Constraint Network is not translatable ");
         }
@@ -175,7 +176,7 @@ public abstract class SmtTranslator {
 
     protected abstract boolean notTranslatable(Operation op);
 
-    public boolean isTranslatable(ConstraintNetwork cn) {
+    public boolean isTranslatable(ConstraintNetworkBuilder cn) {
         for(Node n : cn.vertexSet()) {
             if(n.isOperation()) {
                 if(notTranslatable((Operation)n)) {

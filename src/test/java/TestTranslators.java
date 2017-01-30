@@ -4,6 +4,7 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.snt.cnetwork.core.*;
+import org.snt.cnetwork.exception.EUFInconsistencyException;
 import org.snt.cnetworktrans.core.OutputFormat;
 import org.snt.cnetworktrans.core.RegexParser;
 import org.snt.cnetworktrans.exceptions.NotSupportedException;
@@ -24,11 +25,11 @@ public class TestTranslators {
     final static Logger LOGGER = LoggerFactory.getLogger(TestTranslators.class);
 
 
-    private static ConstraintNetwork cn = null;
+    private static ConstraintNetworkBuilder cn = null;
 
     @Before
     public void setUp() throws Exception {
-        cn = new ConstraintNetwork();
+        cn = new ConstraintNetworkBuilder();
 
         Operand a = new Operand("a", NodeKind.NUMVAR);
         Operand b = new Operand("b", NodeKind.NUMVAR);
@@ -60,7 +61,7 @@ public class TestTranslators {
         LOGGER.info("Test Z3");
         SmtTranslator sa = OutputFormat.Z3STR2.getTranslator();
         try {
-            sa.setConstraintNetwork(cn);
+            sa.setConstraintNetworkBuilder(cn);
         } catch (NotSupportedException e) {
             assert(true);
         }
@@ -77,17 +78,21 @@ public class TestTranslators {
     @Test
     public void testS3() {
 
-        ConstraintNetwork simple = new ConstraintNetwork();
+        ConstraintNetworkBuilder simple = new ConstraintNetworkBuilder();
 
         Operand a = new Operand("a", NodeKind.STRVAR);
         Operand b = new Operand("b", NodeKind.STRVAR);
 
-        Operation add = simple.addConstraint(NodeKind.NEQUALS,a,b);
+        try {
+            Operation add = simple.addConstraint(NodeKind.NEQUALS,a,b);
+        } catch (EUFInconsistencyException e) {
+            Assert.assertFalse(true);
+        }
 
         LOGGER.info("Test S3");
         SmtTranslator sa = OutputFormat.S3.getTranslator();
         try {
-            sa.setConstraintNetwork(simple);
+            sa.setConstraintNetworkBuilder(simple);
         } catch (NotSupportedException e) {
             assert(false);
         }
@@ -109,7 +114,7 @@ public class TestTranslators {
         LOGGER.info("Test CVC4");
         SmtTranslator sa = OutputFormat.CVC4.getTranslator();
         try {
-            sa.setConstraintNetwork(cn);
+            sa.setConstraintNetworkBuilder(cn);
         } catch (NotSupportedException e) {
             e.printStackTrace();
         }
@@ -153,87 +158,104 @@ public class TestTranslators {
     @Test
     public void testCVC4Translator1() {
 
-        ConstraintNetwork tm = new ConstraintNetwork();
-
-        Node x = new Operand("x", NodeKind.STRVAR);
-        Node or = new Operand(".*' +[Oo][Rr] +'", NodeKind.STRREXP);
-        Node v1 = new Operand("sv1", NodeKind.STRVAR);
-        Node orv1 = tm.addOperation(NodeKind.CONCAT, or, v1);
-        Node eq = new Operand("'.*=.*'", NodeKind.STRREXP);
-        Node v2 = new Operand("sv2", NodeKind.STRVAR);
-        Node orv1comp = tm.addOperation(NodeKind.CONCAT, eq, v2);
-        Node orv1compv2 = tm.addOperation(NodeKind.CONCAT, orv1, orv1comp);
-
-        tm.addConstraint(NodeKind.STR_NEQUALS,v1,v2);
-        tm.addConstraint(NodeKind.MATCHES, x, orv1compv2);
-
-        LOGGER.info(tm.toDot());
-
-        SmtTranslator sa = OutputFormat.CVC4.getTranslator();
         try {
-            sa.setConstraintNetwork(tm);
-        } catch (NotSupportedException e) {
-            assert(false);
-        }
-        String out = "" ;
-        try {
-            out = sa.translate();
-        } catch (NotSupportedException | AstProcessorException e) {
+            ConstraintNetworkBuilder tm = new ConstraintNetworkBuilder();
+
+            Node x = new Operand("x", NodeKind.STRVAR);
+            Node or = new Operand(".*' +[Oo][Rr] +'", NodeKind.STRREXP);
+            Node v1 = new Operand("sv1", NodeKind.STRVAR);
+            Node orv1 = tm.addOperation(NodeKind.CONCAT, or, v1);
+            Node eq = new Operand("'.*=.*'", NodeKind.STRREXP);
+            Node v2 = new Operand("sv2", NodeKind.STRVAR);
+            Node orv1comp = tm.addOperation(NodeKind.CONCAT, eq, v2);
+            Node orv1compv2 = tm.addOperation(NodeKind.CONCAT, orv1, orv1comp);
+
+            try {
+                tm.addConstraint(NodeKind.STR_NEQUALS, v1, v2);
+            } catch (EUFInconsistencyException e) {
+                Assert.assertFalse(true);
+            }
+            try {
+                tm.addConstraint(NodeKind.MATCHES, x, orv1compv2);
+            } catch (EUFInconsistencyException e) {
+                Assert.assertFalse(true);
+            }
+
+            //LOGGER.info(tm.toDot());
+
+            SmtTranslator sa = OutputFormat.CVC4.getTranslator();
+            try {
+                sa.setConstraintNetworkBuilder(tm);
+            } catch (NotSupportedException e) {
+                assert (false);
+            }
+            String out = "";
+            try {
+                out = sa.translate();
+            } catch (NotSupportedException | AstProcessorException e) {
+                Assert.assertFalse(true);
+            }
+        } catch (EUFInconsistencyException e) {
             Assert.assertFalse(true);
         }
 
-        LOGGER.info(out);
+        //LOGGER.info(out);
     }
 
     @Test
     public void testCVC4Translator2() {
 
-        ConstraintNetwork tm2 = new ConstraintNetwork();
-        Node x = new Operand("x", NodeKind.STRVAR);
-        String sor = ".*' +[Oo][Rr] +'";
-        Node or = new Operand(sor, NodeKind.STRREXP);
-
-        Node v1 = new Operand("sv7", NodeKind.NUMVAR);
-
-        Node toStrV1 = tm2.addOperation(NodeKind.TOSTR, v1);
-
-        Node orv1 = tm2.addOperation(NodeKind.CONCAT, or, toStrV1);
-
-        Node eq = new Operand(" +\\>= +", NodeKind.STRREXP);
-
-        Node orv1comp = tm2.addOperation(NodeKind.CONCAT, orv1, eq);
-
-        Node v2 = new Operand("sv8", NodeKind.NUMVAR);
-
-        Node toStrV2 = tm2.addOperation(NodeKind.TOSTR, v2);
-
-        Node orv1compv2 = tm2.addOperation(NodeKind.CONCAT, orv1comp, toStrV2);
-
-        String scomment = "(\\<!\\-\\-|#)";
-        Node comment = new Operand(scomment, NodeKind.STRREXP);
-
-        tm2.addOperation(NodeKind.CONCAT,orv1compv2,comment);
-
-        tm2.addConstraint(NodeKind.GREATEREQ, v1,v2);
-
-        tm2.setStartNode(orv1compv2);
-        tm2.addConstraint(NodeKind.MATCHES, x, orv1compv2);
-
-        SmtTranslator sa = OutputFormat.CVC4.getTranslator();
         try {
-            sa.setConstraintNetwork(tm2);
-        } catch (NotSupportedException e) {
-            assert(false);
-        }
-        String out = "" ;
-        try {
-            out = sa.translate();
-        } catch (NotSupportedException | AstProcessorException e) {
+            ConstraintNetworkBuilder tm2 = new ConstraintNetworkBuilder();
+
+            Node x = new Operand("x", NodeKind.STRVAR);
+            String sor = ".*' +[Oo][Rr] +'";
+            Node or = new Operand(sor, NodeKind.STRREXP);
+
+            Node v1 = new Operand("sv7", NodeKind.NUMVAR);
+
+            Node toStrV1 = tm2.addOperation(NodeKind.TOSTR, v1);
+
+            Node orv1 = tm2.addOperation(NodeKind.CONCAT, or, toStrV1);
+
+            Node eq = new Operand(" +\\>= +", NodeKind.STRREXP);
+
+            Node orv1comp = tm2.addOperation(NodeKind.CONCAT, orv1, eq);
+
+            Node v2 = new Operand("sv8", NodeKind.NUMVAR);
+
+            Node toStrV2 = tm2.addOperation(NodeKind.TOSTR, v2);
+
+            Node orv1compv2 = tm2.addOperation(NodeKind.CONCAT, orv1comp, toStrV2);
+
+            String scomment = "(\\<!\\-\\-|#)";
+            Node comment = new Operand(scomment, NodeKind.STRREXP);
+
+            tm2.addOperation(NodeKind.CONCAT, orv1compv2, comment);
+
+            tm2.addConstraint(NodeKind.GREATEREQ, v1, v2);
+
+            tm2.setStartNode(orv1compv2);
+            tm2.addConstraint(NodeKind.MATCHES, x, orv1compv2);
+
+            SmtTranslator sa = OutputFormat.CVC4.getTranslator();
+            try {
+                sa.setConstraintNetworkBuilder(tm2);
+            } catch (NotSupportedException e) {
+                assert (false);
+            }
+            String out = "";
+            try {
+                out = sa.translate();
+            } catch (NotSupportedException | AstProcessorException e) {
+                Assert.assertFalse(true);
+            }
+        } catch(EUFInconsistencyException e) {
             Assert.assertFalse(true);
         }
 
 
-        LOGGER.info(out);
+        //LOGGER.info(out);
     }
 
     @Test

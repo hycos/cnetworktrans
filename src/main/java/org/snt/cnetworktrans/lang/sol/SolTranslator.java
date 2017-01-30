@@ -13,7 +13,7 @@ public class SolTranslator extends SmtTranslator {
 
     @Override
     public String translate() throws NotSupportedException {
-        return this.cn.toConfig();
+        return this.cn.getConstraintNetwork().toConfig();
     }
 
     @Override
