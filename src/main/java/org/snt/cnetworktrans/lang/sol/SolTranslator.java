@@ -18,7 +18,7 @@ public class SolTranslator extends SmtTranslator {
 
     @Override
     public Stack<String> getOperationTrans(Node op) {
-        return new Stack<String>();
+        return new Stack<>();
     }
 
     @Override
