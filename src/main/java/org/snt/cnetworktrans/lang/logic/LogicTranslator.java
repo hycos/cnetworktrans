@@ -1,10 +1,8 @@
-package org.snt.cnetworktrans.lang.cvc4;
+package org.snt.cnetworktrans.lang.logic;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.snt.cnetwork.core.Edge;
 import org.snt.cnetwork.core.Node;
-import org.snt.cnetwork.core.NodeKind;
 import org.snt.cnetwork.core.Operation;
 import org.snt.cnetwork.core.domain.BooleanRange;
 import org.snt.cnetwork.core.domain.Range;
@@ -12,45 +10,31 @@ import org.snt.cnetworktrans.core.RegexParser;
 import org.snt.cnetworktrans.exceptions.NotSupportedException;
 import org.snt.cnetworktrans.lang.SmtEscape;
 import org.snt.cnetworktrans.lang.SmtTranslator;
+import org.snt.cnetworktrans.lang.s3.S3Escape;
+import org.snt.cnetworktrans.lang.s3.S3RegexSplitter;
 import org.snt.inmemantlr.exceptions.AstProcessorException;
 import org.snt.inmemantlr.tree.Ast;
 
-import java.util.List;
-import java.util.Set;
 import java.util.Stack;
 
 
-public class CVC4Translator extends SmtTranslator {
+public class LogicTranslator extends SmtTranslator {
 
-    final static Logger LOGGER = LoggerFactory.getLogger(CVC4Translator.class);
-
-    public CVC4Translator() {
-    }
-
-
-    public boolean ctxCheck(Node n, NodeKind kind) {
-        for(int k = this.ctx.size() - 1; k>= 0; k-- ){
-            if(this.ctx.get(k) == kind) {
-                return true;
-            }
-        }
-        return false;
-    }
-
+    final static Logger LOGGER = LoggerFactory.getLogger(LogicTranslator.class);
 
     @Override
     public String translate() throws NotSupportedException, AstProcessorException {
-        StringBuilder finalOut = new StringBuilder();
-        LOGGER.debug("translate");
 
-        finalOut.append("(elems-logic QF_S)\n" +
-                "(elems-option :produce-models true)\n" +
-                "(elems-option :strings-exp true)\n");
+        LOGGER.info("Translate to S3");
+
+        StringBuilder finalOut = new StringBuilder();
 
         // first check variables
         for (Node n : cn.vertexSet()) {
             if (n.isVariable()) {
+
                 String type;
+
                 if (n.isBoolean()) {
                     type = "Bool";
                 } else if (n.isString()) {
@@ -58,13 +42,12 @@ public class CVC4Translator extends SmtTranslator {
                 } else {
                     type = "Int";
                 }
-                finalOut.append("(declare-fun " + n.getLabel() + " () " + type + ")\n");
+
+                finalOut.append("(declare-variable " + n.getLabel() + " " + type + ")\n");
             }
-            // backtrack starting from basic constraints
-            if(n.isConstraint()) {
-                LOGGER.debug("is constraint " + n.getLabel());
+
+            if(n.isConstraint())
                 doBacktrack(n);
-            }
         }
 
         finalOut.append("\n");
@@ -79,55 +62,14 @@ public class CVC4Translator extends SmtTranslator {
         finalOut.append("\n");
         finalOut.append("(check-sat)\n" + "(get-model)");
 
-        debug();
-        assert(finalOut != null);
-        assert(finalOut.toString() != null);
-
-        LOGGER.debug("HEEELOO");
-
         return finalOut.toString();
-    }
-
-    @Override
-    public Stack<String> getOperandTrans(Node op) throws NotSupportedException {
-        Stack<String> ret = new Stack<String>();
-
-        boolean conv = false;
-
-
-        if (ctxCheck(op, NodeKind.MATCHES) && op.isString()) {
-
-            LOGGER.info("CHECK " + op.getLabel());
-            // first parameters of Matches are always strings
-            Set<Edge> incoming = cn.outgoingEdgesOf(op);
-            if(incoming != null) {
-                for (Edge e : incoming) {
-                    if (e.getDestNode().getKind() == NodeKind.MATCHES &&
-                            e.getSequence() == 0) {
-                        return ret;
-                    }
-                }
-            }
-
-
-            if (op.isOperand() && op.isString()) {
-                // operand wrapped in conversion functions
-                ret.push("str.to.re");
-            }
-        }
-
-        ret.addAll(super.getOperandTrans(op));
-
-        return ret;
     }
 
     @Override
     public Stack<String> getOperationTrans(Node op) throws NotSupportedException {
 
-        LOGGER.info("get Operation Trans " );
-        Stack<String> ret = new Stack<String>();
-
         Operation operation = null;
+        Stack<String> ret = new Stack<String> ();
 
         if(op.isOperation()) {
             operation = (Operation)op;
@@ -139,14 +81,12 @@ public class CVC4Translator extends SmtTranslator {
             throw new NotSupportedException(operation.getKind().toString() + " not supported");
         }
 
-        List<Node> params = this.cn.getParametersFor(op);
-        LOGGER.debug("handle " + operation.getKind());
         switch(operation.getKind()){
             case ADD:
                 ret.push("+");
                 break;
             case MATCHES:
-                ret.push("str.in.re");
+                ret.push("In");
                 break;
             case SUB:
                 ret.push("-");
@@ -164,7 +104,7 @@ public class CVC4Translator extends SmtTranslator {
                 ret.push(">=");
                 break;
             case LEN:
-                ret.push("str.len");
+                ret.push("Length");
                 break;
             case OR:
                 ret.push("or");
@@ -172,13 +112,14 @@ public class CVC4Translator extends SmtTranslator {
             case AND:
                 ret.push("and");
                 break;
+
             case NEQUALS:
             case BOOL_NEQUALS:
             case STR_NEQUALS:
             case NUM_NEQUALS:
-                Range r0 = op.getRange();
-                assert (r0 instanceof BooleanRange);
-                BooleanRange br0 = (BooleanRange)r0;
+                Range r1 = op.getRange();
+                assert (r1 instanceof BooleanRange);
+                BooleanRange br0 = (BooleanRange) r1;
                 ret.push("=");
                 if (br0.isAlwaysTrue()) {
                     ret.push("not");
@@ -188,51 +129,29 @@ public class CVC4Translator extends SmtTranslator {
             case STR_EQUALS:
             case NUM_EQUALS:
             case EQUALS:
-                Range r1 = op.getRange();
-                assert (r1 instanceof BooleanRange);
+                Range r2 = op.getRange();
+                assert (r2 instanceof BooleanRange);
                 ret.push("=");
-                BooleanRange br1 = (BooleanRange) r1;
+                BooleanRange br1 = (BooleanRange)r2;
                 if (br1.isAlwaysFalse()) {
                     ret.push("not");
                 }
                 break;
-            case INDEXOF:
-                ret.push("str.indexof");
-                break;
-            case REPLACE:
-                ret.push("str.replace");
-                break;
-            case VALUEOF:
-                if(params.get(0).isString()) {
-                    ret.push("str.to.int");
-                }
-                break;
-            case TOSTR:
 
-                if(params.get(0).isNumeric()) {
-                    ret.push("int.to.str");
-                } else if(params.get(0).isString()) {
-                    return ret;
-                }
-
-                if(ctxCheck(op, NodeKind.MATCHES)) {
-                    if (this.ctx.peek() == NodeKind.TOSTR) {
-                        ret.push("str.to.re");
-                    }
-                }
-
+            case NOT:
+                ret.push("not");
                 break;
             case SUBSTR:
-                ret.push("str.substr");
+                ret.push("Substring");
+                break;
+            case REPLACE:
+                ret.push("Replace");
                 break;
             case CONCAT:
-                if(ctxCheck(op, NodeKind.MATCHES)) {
-                    ret.push("re.++");
-                    //wrapStringParams(op,false);
-                } else {
-                    ret.push("str.++");
-                }
+                ret.push("Concat");
                 break;
+            case VALUEOF:
+            case TOSTR:
             case SEARCH:
             case EXTERNAL:
             case TOUPPER:
@@ -259,10 +178,13 @@ public class CVC4Translator extends SmtTranslator {
         return ret;
     }
 
+
     @Override
     protected boolean notTranslatable(Operation op) {
 
         switch(op.getKind()) {
+            case VALUEOF:
+            case TOSTR:
             case SEARCH:
             case EXTERNAL:
             case TOUPPER:
@@ -288,26 +210,21 @@ public class CVC4Translator extends SmtTranslator {
         return false;
     }
 
-
-
     @Override
-    protected String translateRegex(Node n) throws AstProcessorException {
+    public String translateRegex(Node n) throws AstProcessorException {
+        LOGGER.info(" translate regex " + n.getLabel());
 
-        assert(n.isRegex());
         //Ast regex = RegexParser.getInstance().parse(n.getLabel());
         RegexParser rp = new RegexParser();
         Ast regex = rp.parse(SmtEscape.trimQuotes(n.getLabel()));
 
-        LOGGER.info(regex.toDot());
-
-        String result = new CVC4RegexSplitter(regex).process();
-
-        return result;
+        S3RegexSplitter splitter = new S3RegexSplitter(regex);
+        return splitter.process();
     }
 
     @Override
     protected String esc(String s) {
-        return CVC4Escape.escapeSpecialCharacters(s);
+        return S3Escape.escapeSpecialCharacters(s);
     }
 
 
