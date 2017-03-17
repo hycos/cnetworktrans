@@ -200,7 +200,7 @@ public class CVC4Translator extends SmtTranslator {
                 ret.push("str.indexof");
                 break;
             case REPLACE:
-                ret.push("str.replace");
+                ret.push("str.relink");
                 break;
             case VALUEOF:
                 if(params.get(0).isString()) {
