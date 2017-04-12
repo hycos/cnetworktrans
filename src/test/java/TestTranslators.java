@@ -35,22 +35,22 @@ public class TestTranslators {
         Operand b = new Operand("b", NodeKind.NUMVAR);
         Operand c = new Operand("20", NodeKind.NUMLIT);
 
-        Operation add = cn.addOperation(NodeKind.ADD,a,b);
-        Operation smeq = cn.addConstraint(NodeKind.SMALLEREQ, add, c);
+        Node add = cn.addOperation(NodeKind.ADD,a,b);
+        Node smeq = cn.addConstraint(NodeKind.SMALLEREQ, add, c);
 
 
         Operand s = new Operand("s1", NodeKind.STRVAR);
         Operand ip = new Operand("a*", NodeKind.STRREXP);
 
-        Operation matches = cn.addConstraint(NodeKind.MATCHES, s, ip);
+        Node matches = cn.addConstraint(NodeKind.MATCHES, s, ip);
 
-        Operation len = cn.addOperation(NodeKind.LEN,s);
+        Node len = cn.addOperation(NodeKind.LEN,s);
 
-        Operation lencon = cn.addConstraint(NodeKind.GREATEREQ, len, c);
+        Node lencon = cn.addConstraint(NodeKind.GREATEREQ, len, c);
 
-        Operation conv = cn.addOperation(NodeKind.TOSTR, a);
+        Node conv = cn.addOperation(NodeKind.TOSTR, a);
 
-        Operation matches2 = cn.addConstraint(NodeKind.MATCHES, s, conv);
+        Node matches2 = cn.addConstraint(NodeKind.MATCHES, s, conv);
     }
 
 
@@ -84,7 +84,7 @@ public class TestTranslators {
         Operand b = new Operand("b", NodeKind.STRVAR);
 
         try {
-            Operation add = simple.addConstraint(NodeKind.NEQUALS,a,b);
+            Node add = simple.addConstraint(NodeKind.NEQUALS,a,b);
         } catch (EUFInconsistencyException e) {
             Assert.assertFalse(true);
         }
