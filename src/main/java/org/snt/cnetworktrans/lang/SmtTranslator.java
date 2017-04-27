@@ -3,9 +3,9 @@ package org.snt.cnetworktrans.lang;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.snt.cnetwork.core.*;
-import org.snt.cnetwork.core.domain.NumCut;
-import org.snt.cnetwork.core.domain.NumRange;
+import org.snt.cnetwork.core.domain.range.NumCut;
+import org.snt.cnetwork.core.domain.range.NumRange;
+import org.snt.cnetwork.core.graph.*;
 import org.snt.cnetworktrans.exceptions.NotSupportedException;
 import org.snt.inmemantlr.exceptions.AstProcessorException;
 

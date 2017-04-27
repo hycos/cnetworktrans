@@ -1,7 +1,7 @@
 package org.snt.cnetworktrans.lang.sol;
 
-import org.snt.cnetwork.core.Node;
-import org.snt.cnetwork.core.Operation;
+import org.snt.cnetwork.core.graph.Node;
+import org.snt.cnetwork.core.graph.Operation;
 import org.snt.cnetworktrans.exceptions.NotSupportedException;
 import org.snt.cnetworktrans.lang.SmtTranslator;
 

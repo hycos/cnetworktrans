@@ -2,10 +2,10 @@ package org.snt.cnetworktrans.lang.s3;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.snt.cnetwork.core.Node;
-import org.snt.cnetwork.core.Operation;
-import org.snt.cnetwork.core.domain.BooleanRange;
-import org.snt.cnetwork.core.domain.Range;
+import org.snt.cnetwork.core.graph.Node;
+import org.snt.cnetwork.core.graph.Operation;
+import org.snt.cnetwork.core.domain.range.BooleanRange;
+import org.snt.cnetwork.core.domain.range.Range;
 import org.snt.cnetworktrans.core.RegexParser;
 import org.snt.cnetworktrans.exceptions.NotSupportedException;
 import org.snt.cnetworktrans.lang.SmtEscape;
