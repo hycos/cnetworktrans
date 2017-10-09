@@ -15,12 +15,12 @@
  * specific language governing permissions and limitations under the Licence.
  */
 
-package org.snt.cnetworktrans.lang.cvc4;
+package com.github.hycos.cnetworktrans.lang.z3;
 
+import com.github.hycos.cnetworktrans.core.RegexSplitter;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.snt.cnetworktrans.core.RegexSplitter;
 import org.snt.inmemantlr.tree.ParseTree;
 import org.snt.inmemantlr.tree.ParseTreeNode;
 
@@ -28,23 +28,31 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
-public class CVC4RegexSplitter extends RegexSplitter {
+public class Z3RegexSplitter extends RegexSplitter {
 
-    final static Logger LOGGER = LoggerFactory.getLogger(CVC4RegexSplitter.class);
+    final static Logger LOGGER = LoggerFactory.getLogger(Z3RegexSplitter.class);
 
-    private static String CONCAT = "re.++";
-    private static String PLUS = "re.+";
-    private static String UNION = "re.union";
-    private static String STAR = "re.*";
-    private static String MEMBERSHIP = "str.in.re";
-    private static String CONV = "str.to.re";
+    private static String CONCAT = "RegexConcat";
+    private static String PLUS = "RegexPlus";
+    private static String UNION = "RegexUnion";
+    private static String STAR = "RegexStar";
+    private static String MEMBERSHIP = "RegexIn";
+    private static String CONV = "Str2Reg";
     private static String EQ = "=";
-    private static String RANGE = "re.range";
-    private static String OPT = "re.opt";
-    private static String ALLCHAR = "re.allchar";
+    private static String RANGE = "RegexCharRange";
 
-    public CVC4RegexSplitter(ParseTree regex) {
+    private boolean addAny = false;
+
+    public Z3RegexSplitter(ParseTree regex) {
         super(regex);
+    }
+
+
+    public String getAny() {
+        char from = '!';
+        char to = '}';
+        String any = "(RegexCharRange \"" + from +"\" \"" + to + "\")";
+        return any;
     }
 
 
@@ -52,9 +60,7 @@ public class CVC4RegexSplitter extends RegexSplitter {
     protected void process(ParseTreeNode n) {
 
         LOGGER.info("Handle " + n.getId() + " " + n.getRule());
-
         switch (n.getRule()) {
-
             case "root":
                 simpleProp(n);
                 break;
@@ -96,15 +102,14 @@ public class CVC4RegexSplitter extends RegexSplitter {
                     ParseTreeNode last = n.getChildren().get(1);
                     ParseTreeNode first = n.getChildren().get(0);
 
-                    LOGGER.info("FIRST " + first.getEscapedLabel() + ">> " + first.getId() + " " + smap.get(first));
-                    LOGGER.info("LAST " + last.getEscapedLabel() + ">> " + last.getId() + " " + smap.get(last));
+                    String lbl = last.getLabel();
 
                     if (last != null && last.getRule().equals("quantifier")) {
-                        switch (last.getLabel()) {
+                        LOGGER.info("QUANTIFIER " + lbl);
+                        switch (lbl) {
                             case "*":
                                 String star = "(" + STAR + " " + smap.get(first) + " )";
-                                //String starvar = putVar(star);
-                                //smap.put(n, starvar);
+                                LOGGER.info("STAR " + star);
                                 smap.put(n,star);
                                 break;
                             case "+":
@@ -112,16 +117,15 @@ public class CVC4RegexSplitter extends RegexSplitter {
                                 smap.put(n,plus);
                                 break;
                             case "?":
-                                String opt = "(" + OPT + " " + smap.get(first) + " )";
-                                smap.put(n,opt);
+                                lbl = "{0,1}";
                                 break;
                         }
 
                         int min = -1;
                         int max = -1;
-                        Pattern pattern = Pattern.compile("\\{([0-9]*),?([0-9]*)\\}");
-                        Matcher matcher = pattern.matcher(last.getLabel());
 
+                        Pattern pattern = Pattern.compile("\\{([0-9]*),?([0-9]*)\\}");
+                        Matcher matcher = pattern.matcher(lbl);
 
                         if (matcher.matches()) {
                             if (matcher.group(1) != null) {
@@ -142,12 +146,10 @@ public class CVC4RegexSplitter extends RegexSplitter {
                                 smin += " " + smap.get(first);
                                 smin += StringUtils.repeat(")", min - 1);
                             } else if (min <= 0) {
-                                smin += "\"\"";
+                                smin += "(" + CONV + " \"\"" + ")" ;
                             }
 
-
                             if (max > -1) {
-
                                 String unroll = smin;
                                 for (int i = min; i < max; i++) {
                                     sran += " (" + UNION + " " + unroll;
@@ -183,7 +185,7 @@ public class CVC4RegexSplitter extends RegexSplitter {
             case "atom":
                 if(n.isLeaf()) {
                     if(n.getLabel().equals(".")) {
-                        smap.put(n, ALLCHAR);
+                        smap.put(n, getAny());
                     }
                 } else {
                     simpleProp(n);
@@ -223,8 +225,9 @@ public class CVC4RegexSplitter extends RegexSplitter {
     }
 
     private String esc(String s) {
-        return CVC4Escape.escapeSpecialCharacters(s);
+        return Z3Escape.escapeSpecialCharacters(s);
     }
+
 
     @Override
     public String getResult() {

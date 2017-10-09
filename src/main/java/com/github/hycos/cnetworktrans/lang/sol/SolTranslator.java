@@ -15,12 +15,12 @@
  * specific language governing permissions and limitations under the Licence.
  */
 
-package org.snt.cnetworktrans.lang.sol;
+package com.github.hycos.cnetworktrans.lang.sol;
 
 import com.github.hycos.cnetwork.core.graph.Node;
 import com.github.hycos.cnetwork.core.graph.Operation;
-import org.snt.cnetworktrans.exceptions.NotSupportedException;
-import org.snt.cnetworktrans.lang.SmtTranslator;
+import com.github.hycos.cnetworktrans.exceptions.NotSupportedException;
+import com.github.hycos.cnetworktrans.lang.SmtTranslator;
 
 import java.util.Stack;
 

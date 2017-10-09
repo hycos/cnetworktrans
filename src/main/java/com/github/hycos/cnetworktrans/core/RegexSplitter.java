@@ -15,7 +15,7 @@
  * specific language governing permissions and limitations under the Licence.
  */
 
-package org.snt.cnetworktrans.core;
+package com.github.hycos.cnetworktrans.core;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;

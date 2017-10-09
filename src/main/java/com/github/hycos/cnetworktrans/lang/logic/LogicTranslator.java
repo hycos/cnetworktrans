@@ -15,20 +15,20 @@
  * specific language governing permissions and limitations under the Licence.
  */
 
-package org.snt.cnetworktrans.lang.logic;
+package com.github.hycos.cnetworktrans.lang.logic;
 
+import com.github.hycos.cnetworktrans.core.RegexParser;
+import com.github.hycos.cnetworktrans.exceptions.NotSupportedException;
+import com.github.hycos.cnetworktrans.lang.SmtEscape;
+import com.github.hycos.cnetworktrans.lang.SmtTranslator;
+import com.github.hycos.cnetworktrans.lang.s3.S3Escape;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.github.hycos.cnetwork.core.graph.Node;
 import com.github.hycos.cnetwork.core.graph.Operation;
 import com.github.hycos.cnetwork.core.domain.range.BooleanRange;
 import com.github.hycos.cnetwork.core.domain.range.Range;
-import org.snt.cnetworktrans.core.RegexParser;
-import org.snt.cnetworktrans.exceptions.NotSupportedException;
-import org.snt.cnetworktrans.lang.SmtEscape;
-import org.snt.cnetworktrans.lang.SmtTranslator;
-import org.snt.cnetworktrans.lang.s3.S3Escape;
-import org.snt.cnetworktrans.lang.s3.S3RegexSplitter;
+import com.github.hycos.cnetworktrans.lang.s3.S3RegexSplitter;
 import org.snt.inmemantlr.exceptions.ParseTreeProcessorException;
 import org.snt.inmemantlr.tree.ParseTree;
 

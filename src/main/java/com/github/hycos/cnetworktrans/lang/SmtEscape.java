@@ -17,14 +17,10 @@
 * limitations under the Licence.
 */
 
-package org.snt.cnetworktrans.lang;
+package com.github.hycos.cnetworktrans.lang;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 
 public class SmtEscape {
 

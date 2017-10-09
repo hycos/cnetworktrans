@@ -15,7 +15,7 @@
  * specific language governing permissions and limitations under the Licence.
  */
 
-package org.snt.cnetworktrans.lang.cvc4;
+package com.github.hycos.cnetworktrans.lang.cvc4;
 
 import com.github.hycos.cnetwork.core.domain.range.BooleanRange;
 import com.github.hycos.cnetwork.core.domain.range.Range;
@@ -23,12 +23,12 @@ import com.github.hycos.cnetwork.core.graph.Edge;
 import com.github.hycos.cnetwork.core.graph.Node;
 import com.github.hycos.cnetwork.core.graph.NodeKind;
 import com.github.hycos.cnetwork.core.graph.Operation;
+import com.github.hycos.cnetworktrans.core.RegexParser;
+import com.github.hycos.cnetworktrans.exceptions.NotSupportedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.snt.cnetworktrans.core.RegexParser;
-import org.snt.cnetworktrans.exceptions.NotSupportedException;
-import org.snt.cnetworktrans.lang.SmtEscape;
-import org.snt.cnetworktrans.lang.SmtTranslator;
+import com.github.hycos.cnetworktrans.lang.SmtEscape;
+import com.github.hycos.cnetworktrans.lang.SmtTranslator;
 import org.snt.inmemantlr.exceptions.ParseTreeProcessorException;
 import org.snt.inmemantlr.tree.ParseTree;
 

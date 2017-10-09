@@ -15,14 +15,14 @@
  * specific language governing permissions and limitations under the Licence.
  */
 
-package org.snt.cnetworktrans.core;
+package com.github.hycos.cnetworktrans.core;
 
 
-import org.snt.cnetworktrans.lang.SmtTranslator;
-import org.snt.cnetworktrans.lang.cvc4.CVC4Translator;
-import org.snt.cnetworktrans.lang.s3.S3Translator;
-import org.snt.cnetworktrans.lang.sol.SolTranslator;
-import org.snt.cnetworktrans.lang.z3.Z3Translator;
+import com.github.hycos.cnetworktrans.lang.SmtTranslator;
+import com.github.hycos.cnetworktrans.lang.cvc4.CVC4Translator;
+import com.github.hycos.cnetworktrans.lang.s3.S3Translator;
+import com.github.hycos.cnetworktrans.lang.sol.SolTranslator;
+import com.github.hycos.cnetworktrans.lang.z3.Z3Translator;
 
 public enum OutputFormat {
 

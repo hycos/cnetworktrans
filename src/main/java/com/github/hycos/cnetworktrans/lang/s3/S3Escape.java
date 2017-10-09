@@ -17,7 +17,7 @@
 * limitations under the Licence.
 */
 
-package org.snt.cnetworktrans.lang.s3;
+package com.github.hycos.cnetworktrans.lang.s3;
 
 import java.util.Arrays;
 import java.util.HashSet;

@@ -15,12 +15,12 @@
  * specific language governing permissions and limitations under the Licence.
  */
 
-package org.snt.cnetworktrans.lang.s3;
+package com.github.hycos.cnetworktrans.lang.cvc4;
 
+import com.github.hycos.cnetworktrans.core.RegexSplitter;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.snt.cnetworktrans.core.RegexSplitter;
 import org.snt.inmemantlr.tree.ParseTree;
 import org.snt.inmemantlr.tree.ParseTreeNode;
 
@@ -28,35 +28,23 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
-public class S3RegexSplitter extends RegexSplitter {
+public class CVC4RegexSplitter extends RegexSplitter {
 
-    final static Logger LOGGER = LoggerFactory.getLogger(S3RegexSplitter.class);
+    final static Logger LOGGER = LoggerFactory.getLogger(CVC4RegexSplitter.class);
 
-    private static String CONCAT = "Concat";
-    private static String UNION = "Union";
-    private static String STAR = "Star";
-    private static String MEMBERSHIP = "In";
+    private static String CONCAT = "re.++";
+    private static String PLUS = "re.+";
+    private static String UNION = "re.union";
+    private static String STAR = "re.*";
+    private static String MEMBERSHIP = "str.in.re";
+    private static String CONV = "str.to.re";
     private static String EQ = "=";
+    private static String RANGE = "re.range";
+    private static String OPT = "re.opt";
+    private static String ALLCHAR = "re.allchar";
 
-    private boolean addAny = false;
-
-    public S3RegexSplitter(ParseTree regex) {
+    public CVC4RegexSplitter(ParseTree regex) {
         super(regex);
-    }
-
-
-    public String getAny() {
-
-        String any = "" ;
-        char from = 'a';
-        char to = 'z';
-        for (char p = from; p < to; p ++) {
-            any += " (" +  UNION  + " \"" + p + "\"";
-        }
-
-        any += " \"" + to + "\"";
-        any += StringUtils.repeat(")", to-from);
-        return any;
     }
 
 
@@ -71,6 +59,7 @@ public class S3RegexSplitter extends RegexSplitter {
                 simpleProp(n);
                 break;
             case "alternation":
+
                 if (n.getChildren().size() == 1) {
                     simpleProp(n);
                     break;
@@ -107,11 +96,11 @@ public class S3RegexSplitter extends RegexSplitter {
                     ParseTreeNode last = n.getChildren().get(1);
                     ParseTreeNode first = n.getChildren().get(0);
 
-                    String lbl = last.getLabel();
-
+                    LOGGER.info("FIRST " + first.getEscapedLabel() + ">> " + first.getId() + " " + smap.get(first));
+                    LOGGER.info("LAST " + last.getEscapedLabel() + ">> " + last.getId() + " " + smap.get(last));
 
                     if (last != null && last.getRule().equals("quantifier")) {
-                        switch (lbl) {
+                        switch (last.getLabel()) {
                             case "*":
                                 String star = "(" + STAR + " " + smap.get(first) + " )";
                                 //String starvar = putVar(star);
@@ -119,21 +108,20 @@ public class S3RegexSplitter extends RegexSplitter {
                                 smap.put(n,star);
                                 break;
                             case "+":
-                                String plus = "(" + CONCAT + " " +
-                                        smap.get(first) + "(" + STAR + " " + smap.get(first) + " ))";
-                                //plus = "(assert (= v" + vid + " (" + CONCAT + " " + smap.get(first) + " " + plus + ")))";
-                                //String plusvar = putVar(plus);
-                                smap.put(n, plus);
+                                String plus = "(" + PLUS + " " + smap.get(first) + " )";
+                                smap.put(n,plus);
                                 break;
                             case "?":
-                                lbl = "{0,1}";
+                                String opt = "(" + OPT + " " + smap.get(first) + " )";
+                                smap.put(n,opt);
                                 break;
                         }
 
                         int min = -1;
                         int max = -1;
                         Pattern pattern = Pattern.compile("\\{([0-9]*),?([0-9]*)\\}");
-                        Matcher matcher = pattern.matcher(lbl);
+                        Matcher matcher = pattern.matcher(last.getLabel());
+
 
                         if (matcher.matches()) {
                             if (matcher.group(1) != null) {
@@ -189,13 +177,13 @@ public class S3RegexSplitter extends RegexSplitter {
             case "literal":
             case "cc_literal":
             case "shared_literal":
-                String label = "\"" + esc(n.getLabel()) + "\"";
+                String label = " (" + CONV + " " + "\"" + esc(n.getLabel()) + "\")";
                 this.smap.put(n,label);
                 break;
             case "atom":
                 if(n.isLeaf()) {
                     if(n.getLabel().equals(".")) {
-                        smap.put(n, getAny());
+                        smap.put(n, ALLCHAR);
                     }
                 } else {
                     simpleProp(n);
@@ -208,23 +196,10 @@ public class S3RegexSplitter extends RegexSplitter {
                     simpleProp(n);
                 } else {
                     assert(n.getChildren().size() == 2);
-
-                    char first = n.getChildren().get(0).getLabel().charAt(0);
-                    char second = n.getChildren().get(1).getLabel().charAt(0);
-
-
-                    assert (second >= first);
-                    String ran = "";
-                    char t = first;
-                    for (t = first; t < second; t++) {
-                        ran += " (" + UNION + " \"" + t + "\"";
-                    }
-                    ran += " \"" + t + "\"";
-                    ran += StringUtils.repeat(")", second - first);
-
-                    //ran = "(assert (= v" + vid + ran + "))";
-                    //String var = putVar(ran);
-                    smap.put(n, ran);
+                    ParseTreeNode first = n.getChildren().get(0);
+                    ParseTreeNode last = n.getChildren().get(1);
+                    String rex = "(" + RANGE + " \"" + esc(first.getLabel()) + "\" \"" + esc(last.getLabel()) + "\")";
+                    smap.put(n, rex);
                 }
                 break;
             case "character_class":
@@ -243,13 +218,13 @@ public class S3RegexSplitter extends RegexSplitter {
                 }
                 break;
         }
-        LOGGER.info(debug());
+
+        //LOGGER.info(debug());
     }
 
     private String esc(String s) {
-        return S3Escape.escapeSpecialCharacters(s);
+        return CVC4Escape.escapeSpecialCharacters(s);
     }
-
 
     @Override
     public String getResult() {
@@ -260,5 +235,6 @@ public class S3RegexSplitter extends RegexSplitter {
     public String getVariables() {
         return "";
     }
+
 
 }

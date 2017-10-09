@@ -15,15 +15,15 @@
  * specific language governing permissions and limitations under the Licence.
  */
 
-package org.snt.cnetworktrans.lang;
+package com.github.hycos.cnetworktrans.lang;
 
 import com.github.hycos.cnetwork.core.graph.*;
+import com.github.hycos.cnetworktrans.exceptions.NotSupportedException;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.github.hycos.cnetwork.core.domain.range.NumCut;
 import com.github.hycos.cnetwork.core.domain.range.NumRange;
-import org.snt.cnetworktrans.exceptions.NotSupportedException;
 import org.snt.inmemantlr.exceptions.ParseTreeProcessorException;
 
 import java.util.HashMap;

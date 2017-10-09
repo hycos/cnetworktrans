@@ -15,7 +15,7 @@
  * specific language governing permissions and limitations under the Licence.
  */
 
-package org.snt.cnetworktrans.exceptions;
+package com.github.hycos.cnetworktrans.exceptions;
 
 
 public class NotSupportedException extends Exception {

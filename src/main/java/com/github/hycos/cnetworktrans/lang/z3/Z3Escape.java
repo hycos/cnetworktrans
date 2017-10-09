@@ -17,24 +17,40 @@
 * limitations under the Licence.
 */
 
-package org.snt.cnetworktrans.lang.cvc4;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+package com.github.hycos.cnetworktrans.lang.z3;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-public class CVC4Escape {
+public class Z3Escape {
 
-    final static Logger LOGGER = LoggerFactory.getLogger(CVC4Escape.class);
-
-    private static Character[] sarray = new Character[]{'+', '{', '}', '(', ')', '[', ']', '&', '^', '-', '?', '*', '\"', '$', '<', '>', '.', '|', '#'};
+    private static Character[] sarray = new Character[]{'+', '{', '}', '(', ')', '[', ']', '&', '^', '-', '?', '*', '\"', '$', '<', '>', '.', '|', '#'
+    , ' '};
     private static Set<Character> special = new HashSet<Character>(Arrays.asList(sarray));
 
 
-    private static String unescapeJava(String s) {
+    public static String escapeSpecialCharacters(String s) {
+        if(s == null)
+            return "";
+
+        StringBuilder out = new StringBuilder();
+        char pred = ' ';
+        for (char c : s.toCharArray()) {
+            if (pred != '\\' && special.contains(c)) {
+                out.append("\\\\\\" + c);
+            } else if (pred == '\\' && special.contains(c)) {
+                out.deleteCharAt(out.length() - 1); // delete NULL
+                out.append(c);
+            } else {
+                out.append(c);
+            }
+            pred = c;
+        }
+        return out.toString();
+    }
+
+    public static String unescapeSpecialCharacters(String s) {
         if(s == null)
             return "";
 
@@ -51,25 +67,4 @@ public class CVC4Escape {
         }
         return out.toString();
     }
-
-    public static String escapeSpecialCharacters(String s) {
-        if(s == null)
-            return "";
-
-        String s2 = unescapeJava(s);
-
-        StringBuilder out = new StringBuilder();
-
-        char carr[] = s2.toCharArray();
-        for(int k = 0; k < carr.length; k ++) {
-            char c = carr[k];
-            if(special.contains(c)) {
-                out.append("\\x" +  String.format("%x", (int) c));
-                continue;
-            }
-            out.append(c);
-        }
-        return out.toString();
-    }
-
 }
