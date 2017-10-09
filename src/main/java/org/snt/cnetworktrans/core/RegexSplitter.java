@@ -3,15 +3,15 @@ package org.snt.cnetworktrans.core;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.snt.inmemantlr.tree.Ast;
-import org.snt.inmemantlr.tree.AstNode;
-import org.snt.inmemantlr.tree.AstProcessor;
+import org.snt.inmemantlr.tree.ParseTree;
+import org.snt.inmemantlr.tree.ParseTreeNode;
+import org.snt.inmemantlr.tree.ParseTreeProcessor;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public abstract class RegexSplitter extends AstProcessor <String,String> {
+public abstract class RegexSplitter extends ParseTreeProcessor <String,String> {
 
     final static Logger LOGGER = LoggerFactory.getLogger(RegexSplitter.class);
 
@@ -21,7 +21,7 @@ public abstract class RegexSplitter extends AstProcessor <String,String> {
 
     public static int vid = 0;
 
-    public RegexSplitter(Ast regex) {
+    public RegexSplitter(ParseTree regex) {
         super(regex);
     }
 
@@ -34,7 +34,8 @@ public abstract class RegexSplitter extends AstProcessor <String,String> {
         return var;
     }
 
-    public String createBinaryExpression(String exp, List<AstNode> nodes) {
+    public String createBinaryExpression(String exp, List<ParseTreeNode>
+            nodes) {
         String out = "";
 
         if(nodes.size() > 1) {
@@ -49,7 +50,7 @@ public abstract class RegexSplitter extends AstProcessor <String,String> {
         return out;
     }
 
-    public void simpleProp(AstNode n) {
+    public void simpleProp(ParseTreeNode n) {
 
         String s = "";
         if (n.getChildren().size() == 0) {
@@ -65,12 +66,12 @@ public abstract class RegexSplitter extends AstProcessor <String,String> {
     }
 
     public String getRootEntry() {
-        return this.smap.get(this.ast.getRoot());
+        return this.smap.get(this.parseTree.getRoot());
     }
 
     @Override
     protected void initialize() {
-        for(AstNode n : this.ast.getNodes()){
+        for(ParseTreeNode n : this.parseTree.getNodes()){
             this.smap.put(n, "");
         }
     }

@@ -4,8 +4,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.snt.cnetworktrans.core.RegexSplitter;
-import org.snt.inmemantlr.tree.Ast;
-import org.snt.inmemantlr.tree.AstNode;
+import org.snt.inmemantlr.tree.ParseTree;
+import org.snt.inmemantlr.tree.ParseTreeNode;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -26,13 +26,13 @@ public class CVC4RegexSplitter extends RegexSplitter {
     private static String OPT = "re.opt";
     private static String ALLCHAR = "re.allchar";
 
-    public CVC4RegexSplitter(Ast regex) {
+    public CVC4RegexSplitter(ParseTree regex) {
         super(regex);
     }
 
 
     @Override
-    protected void process(AstNode n) {
+    protected void process(ParseTreeNode n) {
 
         LOGGER.info("Handle " + n.getId() + " " + n.getRule());
 
@@ -58,7 +58,7 @@ public class CVC4RegexSplitter extends RegexSplitter {
                     break;
                 }
                 boolean concat = true;
-                for (AstNode c : n.getChildren()) {
+                for (ParseTreeNode c : n.getChildren()) {
                     if (!c.getRule().equals("element")) {
                         concat = false;
                     }
@@ -76,8 +76,8 @@ public class CVC4RegexSplitter extends RegexSplitter {
                     simpleProp(n);
                 } else if (n.getChildren().size() == 2) {
 
-                    AstNode last = n.getChildren().get(1);
-                    AstNode first = n.getChildren().get(0);
+                    ParseTreeNode last = n.getChildren().get(1);
+                    ParseTreeNode first = n.getChildren().get(0);
 
                     LOGGER.info("FIRST " + first.getEscapedLabel() + ">> " + first.getId() + " " + smap.get(first));
                     LOGGER.info("LAST " + last.getEscapedLabel() + ">> " + last.getId() + " " + smap.get(last));
@@ -179,8 +179,8 @@ public class CVC4RegexSplitter extends RegexSplitter {
                     simpleProp(n);
                 } else {
                     assert(n.getChildren().size() == 2);
-                    AstNode first = n.getChildren().get(0);
-                    AstNode last = n.getChildren().get(1);
+                    ParseTreeNode first = n.getChildren().get(0);
+                    ParseTreeNode last = n.getChildren().get(1);
                     String rex = "(" + RANGE + " \"" + esc(first.getLabel()) + "\" \"" + esc(last.getLabel()) + "\")";
                     smap.put(n, rex);
                 }
@@ -192,7 +192,7 @@ public class CVC4RegexSplitter extends RegexSplitter {
                     String cc = "";
                     int i = 0;
                     for(i = 0; i < n.getChildren().size() - 1; i++) {
-                        AstNode c = n.getChildren().get(i);
+                        ParseTreeNode c = n.getChildren().get(i);
                         cc += " (" + UNION + " " + this.smap.get(c);
                     }
                     cc += " " + this.smap.get(n.getChildren().get(i));

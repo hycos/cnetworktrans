@@ -3,11 +3,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.snt.cnetwork.core.graph.ConstraintNetworkBuilder;
-import org.snt.cnetwork.core.graph.Node;
-import org.snt.cnetwork.core.graph.NodeKind;
-import org.snt.cnetwork.core.graph.Operand;
-import org.snt.cnetwork.exception.EUFInconsistencyException;
+import com.github.hycos.cnetwork.core.graph.ConstraintNetworkBuilder;
+import com.github.hycos.cnetwork.core.graph.Node;
+import com.github.hycos.cnetwork.core.graph.NodeKind;
+import com.github.hycos.cnetwork.core.graph.Operand;
+import com.github.hycos.cnetwork.exception.EUFInconsistencyException;
 import org.snt.cnetworktrans.core.OutputFormat;
 import org.snt.cnetworktrans.core.RegexParser;
 import org.snt.cnetworktrans.exceptions.NotSupportedException;
@@ -17,8 +17,8 @@ import org.snt.cnetworktrans.lang.cvc4.CVC4Escape;
 import org.snt.cnetworktrans.lang.cvc4.CVC4RegexSplitter;
 import org.snt.cnetworktrans.lang.s3.S3RegexSplitter;
 import org.snt.cnetworktrans.lang.z3.Z3RegexSplitter;
-import org.snt.inmemantlr.exceptions.AstProcessorException;
-import org.snt.inmemantlr.tree.Ast;
+import org.snt.inmemantlr.exceptions.ParseTreeProcessorException;
+import org.snt.inmemantlr.tree.ParseTree;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -102,7 +102,7 @@ public class TestTranslators {
         String out = null;
         try {
             out = sa.translate();
-        } catch (NotSupportedException | AstProcessorException e) {
+        } catch (NotSupportedException | ParseTreeProcessorException e) {
             Assert.assertFalse(true);
         }
 
@@ -124,7 +124,7 @@ public class TestTranslators {
         String out = null;
         try {
             out = sa.translate();
-        } catch (NotSupportedException | AstProcessorException e) {
+        } catch (NotSupportedException | ParseTreeProcessorException e) {
             Assert.assertFalse(true);
         }
 
@@ -142,14 +142,14 @@ public class TestTranslators {
 
         String test =  ".*' +[Oo][Rr] +'";
 
-        Ast a = new RegexParser().parse(test);
+        ParseTree a = new RegexParser().parse(test);
 
         LOGGER.info(a.toDot());
         CVC4RegexSplitter splitter = new CVC4RegexSplitter(a);
         String out = null;
         try {
             out = splitter.process();
-        } catch (AstProcessorException e) {
+        } catch (ParseTreeProcessorException e) {
             Assert.assertFalse(true);
         }
         LOGGER.info(a.toDot());
@@ -195,7 +195,7 @@ public class TestTranslators {
             String out = "";
             try {
                 out = sa.translate();
-            } catch (NotSupportedException | AstProcessorException e) {
+            } catch (NotSupportedException | ParseTreeProcessorException e) {
                 Assert.assertFalse(true);
             }
         } catch (EUFInconsistencyException e) {
@@ -250,7 +250,7 @@ public class TestTranslators {
             String out = "";
             try {
                 out = sa.translate();
-            } catch (NotSupportedException | AstProcessorException e) {
+            } catch (NotSupportedException | ParseTreeProcessorException e) {
                 Assert.assertFalse(true);
             }
         } catch(EUFInconsistencyException e) {
@@ -290,15 +290,15 @@ public class TestTranslators {
         String test =  ".*(\\<((! *- *-)?|( *- *-)?\\>)|\\< *CDATA\\[\\[.*\\]\\] *\\>).";
 
         RegexParser rp = new RegexParser();
-        Ast regex = rp.parse(test);
-        //Ast a = RegexParser.getInstance().parse(test);
+        ParseTree regex = rp.parse(test);
+        //ParseTree a = RegexParser.getInstance().parse(test);
 
         LOGGER.info(regex.toDot());
 
         Z3RegexSplitter splitter = new Z3RegexSplitter(regex);
         try {
             splitter.process();
-        } catch (AstProcessorException e) {
+        } catch (ParseTreeProcessorException e) {
             Assert.assertFalse(true);
         }
         String out = splitter.getResult();
@@ -310,12 +310,12 @@ public class TestTranslators {
     public void testZ3Splitter2() {
         String xss = "\\< *[Ss] *\\>[a-z]";
         RegexParser rp = new RegexParser();
-        Ast regex = rp.parse(xss);
+        ParseTree regex = rp.parse(xss);
         LOGGER.info(regex.toDot());
         Z3RegexSplitter splitter = new Z3RegexSplitter(regex);
         try {
             splitter.process();
-        } catch (AstProcessorException e) {
+        } catch (ParseTreeProcessorException e) {
             Assert.assertFalse(true);
         }
         String out = splitter.getResult();
@@ -330,8 +330,8 @@ public class TestTranslators {
         String test =  ".*(\\<((! *- *-)?|( *- *-)?\\>)|\\< *CDATA\\[\\[.*\\]\\] *\\>).";
 
         RegexParser rp = new RegexParser();
-        Ast regex = rp.parse(test);
-        //Ast a = RegexParser.getInstance().parse(test);
+        ParseTree regex = rp.parse(test);
+        //ParseTree a = RegexParser.getInstance().parse(test);
 
         LOGGER.info(regex.toDot());
 
@@ -339,7 +339,7 @@ public class TestTranslators {
         String out = null;
         try {
             out = splitter.process();
-        } catch (AstProcessorException e) {
+        } catch (ParseTreeProcessorException e) {
             Assert.assertFalse(true);
         }
         splitter.getResult();
@@ -363,14 +363,14 @@ public class TestTranslators {
         LOGGER.info("Test S3");
 
         RegexParser rp = new RegexParser();
-        Ast regex = rp.parse(xss);
-        //Ast a = RegexParser.getInstance().parse(test);
+        ParseTree regex = rp.parse(xss);
+        //ParseTree a = RegexParser.getInstance().parse(test);
 
         S3RegexSplitter splitter = new S3RegexSplitter(regex);
         String out = null;
         try {
             out = splitter.process();
-        } catch (AstProcessorException e) {
+        } catch (ParseTreeProcessorException e) {
             Assert.assertFalse(true);
         }
         splitter.getResult();

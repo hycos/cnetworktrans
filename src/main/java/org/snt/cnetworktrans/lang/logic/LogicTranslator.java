@@ -2,18 +2,18 @@ package org.snt.cnetworktrans.lang.logic;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.snt.cnetwork.core.graph.Node;
-import org.snt.cnetwork.core.graph.Operation;
-import org.snt.cnetwork.core.domain.range.BooleanRange;
-import org.snt.cnetwork.core.domain.range.Range;
+import com.github.hycos.cnetwork.core.graph.Node;
+import com.github.hycos.cnetwork.core.graph.Operation;
+import com.github.hycos.cnetwork.core.domain.range.BooleanRange;
+import com.github.hycos.cnetwork.core.domain.range.Range;
 import org.snt.cnetworktrans.core.RegexParser;
 import org.snt.cnetworktrans.exceptions.NotSupportedException;
 import org.snt.cnetworktrans.lang.SmtEscape;
 import org.snt.cnetworktrans.lang.SmtTranslator;
 import org.snt.cnetworktrans.lang.s3.S3Escape;
 import org.snt.cnetworktrans.lang.s3.S3RegexSplitter;
-import org.snt.inmemantlr.exceptions.AstProcessorException;
-import org.snt.inmemantlr.tree.Ast;
+import org.snt.inmemantlr.exceptions.ParseTreeProcessorException;
+import org.snt.inmemantlr.tree.ParseTree;
 
 import java.util.Stack;
 
@@ -23,7 +23,7 @@ public class LogicTranslator extends SmtTranslator {
     final static Logger LOGGER = LoggerFactory.getLogger(LogicTranslator.class);
 
     @Override
-    public String translate() throws NotSupportedException, AstProcessorException {
+    public String translate() throws NotSupportedException, ParseTreeProcessorException {
 
         LOGGER.info("Translate to S3");
 
@@ -211,12 +211,12 @@ public class LogicTranslator extends SmtTranslator {
     }
 
     @Override
-    public String translateRegex(Node n) throws AstProcessorException {
+    public String translateRegex(Node n) throws ParseTreeProcessorException {
         LOGGER.info(" translate regex " + n.getLabel());
 
-        //Ast regex = RegexParser.getInstance().parse(n.getLabel());
+        //ParseTree regex = RegexParser.getInstance().parse(n.getLabel());
         RegexParser rp = new RegexParser();
-        Ast regex = rp.parse(SmtEscape.trimQuotes(n.getLabel()));
+        ParseTree regex = rp.parse(SmtEscape.trimQuotes(n.getLabel()));
 
         S3RegexSplitter splitter = new S3RegexSplitter(regex);
         return splitter.process();

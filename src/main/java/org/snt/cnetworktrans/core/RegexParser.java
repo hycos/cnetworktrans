@@ -5,8 +5,9 @@ import org.slf4j.LoggerFactory;
 import org.snt.inmemantlr.GenericParser;
 import org.snt.inmemantlr.exceptions.CompilationException;
 import org.snt.inmemantlr.exceptions.IllegalWorkflowException;
+import org.snt.inmemantlr.exceptions.ParsingException;
 import org.snt.inmemantlr.listener.DefaultTreeListener;
-import org.snt.inmemantlr.tree.Ast;
+import org.snt.inmemantlr.tree.ParseTree;
 import org.snt.inmemantlr.utils.FileUtils;
 
 import java.io.InputStream;
@@ -39,7 +40,7 @@ public class RegexParser {
         }
     }
 
-    public static Ast parse(String regex)  {
+    public static ParseTree parse(String regex)  {
 
 
         GenericParser gp = new GenericParser(grammar);
@@ -59,8 +60,11 @@ public class RegexParser {
         } catch (IllegalWorkflowException e) {
             LOGGER.error("error parsing regular expression");
             System.exit(-1);
+        } catch (ParsingException e) {
+            LOGGER.error("error parsing regular expression");
+            System.exit(-1);
         }
-        return rl.getAst();
+        return rl.getParseTree();
     }
 
 }

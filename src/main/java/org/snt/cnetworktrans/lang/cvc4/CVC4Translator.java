@@ -1,19 +1,19 @@
 package org.snt.cnetworktrans.lang.cvc4;
 
+import com.github.hycos.cnetwork.core.domain.range.BooleanRange;
+import com.github.hycos.cnetwork.core.domain.range.Range;
+import com.github.hycos.cnetwork.core.graph.Edge;
+import com.github.hycos.cnetwork.core.graph.Node;
+import com.github.hycos.cnetwork.core.graph.NodeKind;
+import com.github.hycos.cnetwork.core.graph.Operation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.snt.cnetwork.core.graph.Edge;
-import org.snt.cnetwork.core.graph.Node;
-import org.snt.cnetwork.core.graph.NodeKind;
-import org.snt.cnetwork.core.graph.Operation;
-import org.snt.cnetwork.core.domain.range.BooleanRange;
-import org.snt.cnetwork.core.domain.range.Range;
 import org.snt.cnetworktrans.core.RegexParser;
 import org.snt.cnetworktrans.exceptions.NotSupportedException;
 import org.snt.cnetworktrans.lang.SmtEscape;
 import org.snt.cnetworktrans.lang.SmtTranslator;
-import org.snt.inmemantlr.exceptions.AstProcessorException;
-import org.snt.inmemantlr.tree.Ast;
+import org.snt.inmemantlr.exceptions.ParseTreeProcessorException;
+import org.snt.inmemantlr.tree.ParseTree;
 
 import java.util.List;
 import java.util.Set;
@@ -39,7 +39,8 @@ public class CVC4Translator extends SmtTranslator {
 
 
     @Override
-    public String translate() throws NotSupportedException, AstProcessorException {
+    public String translate() throws NotSupportedException,
+            ParseTreeProcessorException {
         StringBuilder finalOut = new StringBuilder();
         LOGGER.debug("translate");
 
@@ -291,12 +292,12 @@ public class CVC4Translator extends SmtTranslator {
 
 
     @Override
-    protected String translateRegex(Node n) throws AstProcessorException {
+    protected String translateRegex(Node n) throws ParseTreeProcessorException {
 
         assert(n.isRegex());
         //Ast regex = RegexParser.getInstance().parse(n.getLabel());
         RegexParser rp = new RegexParser();
-        Ast regex = rp.parse(SmtEscape.trimQuotes(n.getLabel()));
+        ParseTree regex = rp.parse(SmtEscape.trimQuotes(n.getLabel()));
 
         LOGGER.info(regex.toDot());
 
