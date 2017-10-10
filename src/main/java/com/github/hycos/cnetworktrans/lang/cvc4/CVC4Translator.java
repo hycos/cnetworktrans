@@ -23,14 +23,15 @@ import com.github.hycos.cnetwork.core.graph.Edge;
 import com.github.hycos.cnetwork.core.graph.Node;
 import com.github.hycos.cnetwork.core.graph.NodeKind;
 import com.github.hycos.cnetwork.core.graph.Operation;
-import com.github.hycos.cnetworktrans.core.RegexParser;
 import com.github.hycos.cnetworktrans.exceptions.NotSupportedException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import com.github.hycos.cnetworktrans.lang.SmtEscape;
 import com.github.hycos.cnetworktrans.lang.SmtTranslator;
+import com.github.hycos.regex2smtlib.Translator;
+import com.github.hycos.regex2smtlib.translator.exception.FormatNotAvailableException;
+import com.github.hycos.regex2smtlib.translator.exception.TranslationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.snt.inmemantlr.exceptions.ParseTreeProcessorException;
-import org.snt.inmemantlr.tree.ParseTree;
 
 import java.util.List;
 import java.util.Set;
@@ -311,16 +312,19 @@ public class CVC4Translator extends SmtTranslator {
     @Override
     protected String translateRegex(Node n) throws ParseTreeProcessorException {
 
-        assert(n.isRegex());
-        //Ast regex = RegexParser.getInstance().parse(n.getLabel());
-        RegexParser rp = new RegexParser();
-        ParseTree regex = rp.parse(SmtEscape.trimQuotes(n.getLabel()));
+        LOGGER.info(" translate regex " + n.getLabel());
 
-        LOGGER.info(regex.toDot());
+        String rexp = "";
+        try {
+            rexp = Translator.INSTANCE.translate("cvc4", SmtEscape.trimQuotes(n
+                    .getLabel
+                            ()));
+        } catch (FormatNotAvailableException | TranslationException e) {
+            assert (false);
+            e.printStackTrace();
+        }
 
-        String result = new CVC4RegexSplitter(regex).process();
-
-        return result;
+        return rexp;
     }
 
     @Override

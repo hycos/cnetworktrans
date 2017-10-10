@@ -22,6 +22,7 @@
         <junit.version>4.12</junit.version>
         <dkbrics.version>1.11-8</dkbrics.version>
         <inmemantlr.version>1.3.9</inmemantlr.version>
+        <regex2smtlib.version>1.0-SNAPSHOT</regex2smtlib.version>
     </properties>
 
     <licenses>
@@ -133,6 +134,11 @@
             <groupId>com.github.hycos</groupId>
             <artifactId>cnetwork</artifactId>
             <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.hycos</groupId>
+            <artifactId>regex2smtlib</artifactId>
+            <version>${regex2smtlib.version}</version>
         </dependency>
         <dependency>
             <groupId>com.github.julianthome</groupId>

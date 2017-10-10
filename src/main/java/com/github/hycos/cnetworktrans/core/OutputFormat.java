@@ -20,7 +20,6 @@ package com.github.hycos.cnetworktrans.core;
 
 import com.github.hycos.cnetworktrans.lang.SmtTranslator;
 import com.github.hycos.cnetworktrans.lang.cvc4.CVC4Translator;
-import com.github.hycos.cnetworktrans.lang.s3.S3Translator;
 import com.github.hycos.cnetworktrans.lang.sol.SolTranslator;
 import com.github.hycos.cnetworktrans.lang.z3.Z3Translator;
 
@@ -28,8 +27,7 @@ public enum OutputFormat {
 
     SOL(0, "Sol"),
     CVC4 (1, "CVC4"),
-    Z3STR2(2, "Z3Str2"),
-    S3(3, "S3");
+    Z3STR2(2, "Z3Str2");
 
 
     private int id;
@@ -46,7 +44,6 @@ public enum OutputFormat {
             case SOL: return new SolTranslator();
             case CVC4: return new CVC4Translator();
             case Z3STR2: return new Z3Translator();
-            case S3: return new S3Translator();
         }
         return null;
     }
@@ -60,13 +57,12 @@ public enum OutputFormat {
             case "sol" : return SOL;
             case "cvc4" : return CVC4;
             case "z3str2": return Z3STR2;
-            case "s3" : return S3;
         }
         return null;
     }
 
     public static String getAvailableFormats() {
-        return "(" + SOL.getName() + "," + CVC4.getName() + "," + Z3STR2.getName() + "," + S3.getName() +")";
+        return "(" + SOL.getName() + "," + CVC4.getName() + "," + Z3STR2.getName() + ")";
     }
 
 

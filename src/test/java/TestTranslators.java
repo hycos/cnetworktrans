@@ -15,30 +15,22 @@
  * specific language governing permissions and limitations under the Licence.
  */
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import com.github.hycos.cnetwork.core.graph.ConstraintNetworkBuilder;
 import com.github.hycos.cnetwork.core.graph.Node;
 import com.github.hycos.cnetwork.core.graph.NodeKind;
 import com.github.hycos.cnetwork.core.graph.Operand;
 import com.github.hycos.cnetwork.exception.EUFInconsistencyException;
 import com.github.hycos.cnetworktrans.core.OutputFormat;
-import com.github.hycos.cnetworktrans.core.RegexParser;
 import com.github.hycos.cnetworktrans.exceptions.NotSupportedException;
 import com.github.hycos.cnetworktrans.lang.SmtEscape;
 import com.github.hycos.cnetworktrans.lang.SmtTranslator;
 import com.github.hycos.cnetworktrans.lang.cvc4.CVC4Escape;
-import com.github.hycos.cnetworktrans.lang.cvc4.CVC4RegexSplitter;
-import com.github.hycos.cnetworktrans.lang.s3.S3RegexSplitter;
-import com.github.hycos.cnetworktrans.lang.z3.Z3RegexSplitter;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.snt.inmemantlr.exceptions.ParseTreeProcessorException;
-import org.snt.inmemantlr.tree.ParseTree;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class TestTranslators {
 
@@ -95,38 +87,7 @@ public class TestTranslators {
         //LOGGER.info(out);
     }
 
-    @Test
-    public void testS3() {
 
-        ConstraintNetworkBuilder simple = new ConstraintNetworkBuilder();
-
-        Operand a = new Operand("a", NodeKind.STRVAR);
-        Operand b = new Operand("b", NodeKind.STRVAR);
-
-        try {
-            Node add = simple.addConstraint(NodeKind.NEQUALS,a,b);
-        } catch (EUFInconsistencyException e) {
-            Assert.assertFalse(true);
-        }
-
-        LOGGER.info("Test S3");
-        SmtTranslator sa = OutputFormat.S3.getTranslator();
-        try {
-            sa.setConstraintNetworkBuilder(simple);
-        } catch (NotSupportedException e) {
-            assert(false);
-        }
-        String out = null;
-        try {
-            out = sa.translate();
-        } catch (NotSupportedException | ParseTreeProcessorException e) {
-            Assert.assertFalse(true);
-        }
-
-
-        LOGGER.info(out);
-
-    }
 
     @Test
     public void testCVC4() {
@@ -145,33 +106,7 @@ public class TestTranslators {
             Assert.assertFalse(true);
         }
 
-
-
-        LOGGER.info(out);
-
-    }
-
-
-    @Test
-    public void testCVC4Splitter() {
-
-        LOGGER.info("Test CVC4");
-
-        String test =  ".*' +[Oo][Rr] +'";
-
-        ParseTree a = new RegexParser().parse(test);
-
-        LOGGER.info(a.toDot());
-        CVC4RegexSplitter splitter = new CVC4RegexSplitter(a);
-        String out = null;
-        try {
-            out = splitter.process();
-        } catch (ParseTreeProcessorException e) {
-            Assert.assertFalse(true);
-        }
-        LOGGER.info(a.toDot());
-        LOGGER.info(out);
-
+        //LOGGER.info(out);
     }
 
 
@@ -299,72 +234,6 @@ public class TestTranslators {
     }
 
 
-    @Test
-    public void testZ3Splitter1() {
-
-        LOGGER.info("Test Z3");
-
-        String test =  ".*(\\<((! *- *-)?|( *- *-)?\\>)|\\< *CDATA\\[\\[.*\\]\\] *\\>).";
-
-        RegexParser rp = new RegexParser();
-        ParseTree regex = rp.parse(test);
-        //ParseTree a = RegexParser.getInstance().parse(test);
-
-        LOGGER.info(regex.toDot());
-
-        Z3RegexSplitter splitter = new Z3RegexSplitter(regex);
-        try {
-            splitter.process();
-        } catch (ParseTreeProcessorException e) {
-            Assert.assertFalse(true);
-        }
-        String out = splitter.getResult();
-        LOGGER.info(out);
-
-    }
-
-    @Test
-    public void testZ3Splitter2() {
-        String xss = "\\< *[Ss] *\\>[a-z]";
-        RegexParser rp = new RegexParser();
-        ParseTree regex = rp.parse(xss);
-        LOGGER.info(regex.toDot());
-        Z3RegexSplitter splitter = new Z3RegexSplitter(regex);
-        try {
-            splitter.process();
-        } catch (ParseTreeProcessorException e) {
-            Assert.assertFalse(true);
-        }
-        String out = splitter.getResult();
-        LOGGER.info(out);
-
-    }
-    @Test
-    public void testS3Splitter1() {
-
-        LOGGER.info("Test S3");
-
-        String test =  ".*(\\<((! *- *-)?|( *- *-)?\\>)|\\< *CDATA\\[\\[.*\\]\\] *\\>).";
-
-        RegexParser rp = new RegexParser();
-        ParseTree regex = rp.parse(test);
-        //ParseTree a = RegexParser.getInstance().parse(test);
-
-        LOGGER.info(regex.toDot());
-
-        S3RegexSplitter splitter = new S3RegexSplitter(regex);
-        String out = null;
-        try {
-            out = splitter.process();
-        } catch (ParseTreeProcessorException e) {
-            Assert.assertFalse(true);
-        }
-        splitter.getResult();
-        LOGGER.info(out);
-
-    }
-
-
     private static String script = "\\< *[Ss][Cc][Rr][Ii][Pp][Tt] *\\>" +
             "[a-zA-Z0-9\\(\\);]+\\</ *[Ss][Cc][Rr][Ii][Pp][Tt] \\>";
 
@@ -374,39 +243,6 @@ public class TestTranslators {
     private static String xss = "(" + script + "|" + img + ")";
 
 
-    @Test
-    public void testS3Splitter2() {
-
-        LOGGER.info("Test S3");
-
-        RegexParser rp = new RegexParser();
-        ParseTree regex = rp.parse(xss);
-        //ParseTree a = RegexParser.getInstance().parse(test);
-
-        S3RegexSplitter splitter = new S3RegexSplitter(regex);
-        String out = null;
-        try {
-            out = splitter.process();
-        } catch (ParseTreeProcessorException e) {
-            Assert.assertFalse(true);
-        }
-        splitter.getResult();
-        LOGGER.info(out);
-        //LOGGER.info(regex.toDot());
-
-    }
-
-    @Test
-    public void testApp() {
-        LOGGER.info("test app");
-        Pattern p = Pattern.compile("[0-9A-Z0-9]{3}\\-[0-9A-Z0-9]{3}\\-([0-9A-Z0-9\\-]+)");
-
-        Matcher m = p.matcher("APP-WIX-51515");
-
-        if(m.matches())
-            LOGGER.info(m.group(1));
-
-    }
 
 }
 

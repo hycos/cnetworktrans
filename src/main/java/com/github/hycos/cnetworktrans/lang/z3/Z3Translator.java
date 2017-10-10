@@ -17,18 +17,19 @@
 
 package com.github.hycos.cnetworktrans.lang.z3;
 
-import com.github.hycos.cnetworktrans.core.RegexParser;
+import com.github.hycos.cnetwork.core.domain.range.BooleanRange;
+import com.github.hycos.cnetwork.core.domain.range.Range;
+import com.github.hycos.cnetwork.core.graph.Node;
+import com.github.hycos.cnetwork.core.graph.Operation;
 import com.github.hycos.cnetworktrans.exceptions.NotSupportedException;
 import com.github.hycos.cnetworktrans.lang.SmtEscape;
 import com.github.hycos.cnetworktrans.lang.SmtTranslator;
+import com.github.hycos.regex2smtlib.Translator;
+import com.github.hycos.regex2smtlib.translator.exception.FormatNotAvailableException;
+import com.github.hycos.regex2smtlib.translator.exception.TranslationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.github.hycos.cnetwork.core.graph.Node;
-import com.github.hycos.cnetwork.core.graph.Operation;
-import com.github.hycos.cnetwork.core.domain.range.BooleanRange;
-import com.github.hycos.cnetwork.core.domain.range.Range;
 import org.snt.inmemantlr.exceptions.ParseTreeProcessorException;
-import org.snt.inmemantlr.tree.ParseTree;
 
 import java.util.Stack;
 
@@ -234,13 +235,18 @@ public class Z3Translator extends SmtTranslator {
     @Override
     public String translateRegex(Node n) throws ParseTreeProcessorException {
         LOGGER.info(" translate regex " + n.getLabel());
-        RegexParser rp = new RegexParser();
-        ParseTree regex = rp.parse(SmtEscape.trimQuotes(n.getLabel()));
 
-        Z3RegexSplitter splitter = new Z3RegexSplitter(regex);
+        String rexp = "";
+        try {
+            rexp = Translator.INSTANCE.translate("z3", SmtEscape.trimQuotes(n
+                    .getLabel
+                    ()));
+        } catch (FormatNotAvailableException | TranslationException e) {
+           assert (false);
+           e.printStackTrace();
+        }
 
-        return splitter.process();
-
+        return rexp;
     }
 
     @Override
