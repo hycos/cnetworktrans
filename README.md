@@ -7,13 +7,11 @@ formats.
 
 [![License: EUPL](https://img.shields.io/badge/License-EUPL-yellow.svg)][licence]
 [![Language](http://img.shields.io/badge/language-java-brightgreen.svg)][language]
-[![Maven](https://maven-badges.herokuapp.com/maven-central/com.github.hycos/cnetworktrans/badge.svg)][maven]
 [![Linux Build Status](https://img.shields.io/travis/hycos/cnetworktrans/master.svg?label=Linux%20build)][travis]
 [![Test Coverage](https://codecov.io/gh/hycos/cnetworktrans/branch/master/graph/badge.svg)][coverage]
 
 [licence]: https://joinup.ec.europa.eu/sites/default/files/eupl1.1.-licence-en_0.pdf
 [language]: https://www.java.com
-[maven]: https://maven-badges.herokuapp.com/maven-central/com.github.hycos/cnetworktrans
 [travis]: https://travis-ci.org/hycos/cnetworktrans
 [coverage]: https://codecov.io/gh/hycos/cnetworktrans
 
