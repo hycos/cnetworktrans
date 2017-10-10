@@ -116,7 +116,7 @@ public class CVC4Translator extends SmtTranslator {
 
         if (ctxCheck(op, NodeKind.MATCHES) && op.isString()) {
 
-            LOGGER.info("CHECK " + op.getLabel());
+            LOGGER.debug("CHECK " + op.getLabel());
             // first parameters of Matches are always strings
             Set<Edge> incoming = cn.outgoingEdgesOf(op);
             if(incoming != null) {
@@ -143,7 +143,7 @@ public class CVC4Translator extends SmtTranslator {
     @Override
     public Stack<String> getOperationTrans(Node op) throws NotSupportedException {
 
-        LOGGER.info("get Operation Trans " );
+        LOGGER.debug("get Operation Trans " );
         Stack<String> ret = new Stack<String>();
 
         Operation operation = null;
@@ -312,7 +312,7 @@ public class CVC4Translator extends SmtTranslator {
     @Override
     protected String translateRegex(Node n) throws ParseTreeProcessorException {
 
-        LOGGER.info(" translate regex " + n.getLabel());
+        LOGGER.debug(" translate regex " + n.getLabel());
 
         String rexp = "";
         try {
