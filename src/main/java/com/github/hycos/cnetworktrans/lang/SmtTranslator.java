@@ -49,7 +49,7 @@ public abstract class SmtTranslator {
 
     public void init() {
         for(Node n : this.cn.vertexSet()) {
-            LOGGER.info("Node " + n.getLabel());
+            LOGGER.debug("Node " + n.getLabel());
             if(n.isLiteral() || n.isRegex() || n.isOperand()) {
                 this.vresolv.put(n, n.getLabel());
             }
@@ -136,11 +136,11 @@ public abstract class SmtTranslator {
 
     protected void debug() {
 
-        LOGGER.info("RESOLVE: =================================\n");
+        LOGGER.debug("RESOLVE: =================================\n");
         for (Map.Entry<Node, String> e : vresolv.entrySet()) {
-            LOGGER.info(e.getKey().getId() + " :: " + e.getValue());
+            LOGGER.debug(e.getKey().getId() + " :: " + e.getValue());
         }
-        LOGGER.info("\n=========================================\n");
+        LOGGER.debug("\n=========================================\n");
     }
 
     public void setConstraintNetworkBuilder(ConstraintNetworkBuilder cn) throws
@@ -197,7 +197,7 @@ public abstract class SmtTranslator {
         for(Node n : cn.vertexSet()) {
             if(n.isOperation()) {
                 if(notTranslatable((Operation)n)) {
-                    LOGGER.info("op " + n.getKind());
+                    LOGGER.debug("op " + n.getKind());
                     return false;
                 }
             }

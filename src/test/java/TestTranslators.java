@@ -70,7 +70,7 @@ public class TestTranslators {
     public void testZ3() {
 
 
-        LOGGER.info("Test Z3");
+        LOGGER.debug("Test Z3");
         SmtTranslator sa = OutputFormat.Z3STR2.getTranslator();
         try {
             sa.setConstraintNetworkBuilder(cn);
@@ -84,7 +84,7 @@ public class TestTranslators {
             e.printStackTrace();
         }**/
 
-        //LOGGER.info(out);
+        //LOGGER.debug(out);
     }
 
 
@@ -92,7 +92,7 @@ public class TestTranslators {
     @Test
     public void testCVC4() {
 
-        LOGGER.info("Test CVC4");
+        LOGGER.debug("Test CVC4");
         SmtTranslator sa = OutputFormat.CVC4.getTranslator();
         try {
             sa.setConstraintNetworkBuilder(cn);
@@ -106,7 +106,7 @@ public class TestTranslators {
             Assert.assertFalse(true);
         }
 
-        //LOGGER.info(out);
+        //LOGGER.debug(out);
     }
 
 
@@ -136,7 +136,7 @@ public class TestTranslators {
                 Assert.assertFalse(true);
             }
 
-            //LOGGER.info(tm.toDot());
+            //LOGGER.debug(tm.toDot());
 
             SmtTranslator sa = OutputFormat.CVC4.getTranslator();
             try {
@@ -154,7 +154,7 @@ public class TestTranslators {
             Assert.assertFalse(true);
         }
 
-        //LOGGER.info(out);
+        //LOGGER.debug(out);
     }
 
     @Test
@@ -210,7 +210,7 @@ public class TestTranslators {
         }
 
 
-        //LOGGER.info(out);
+        //LOGGER.debug(out);
     }
 
     @Test
@@ -219,7 +219,7 @@ public class TestTranslators {
 
         String s2 = CVC4Escape.escapeSpecialCharacters(s);
 
-        LOGGER.info(s2);
+        LOGGER.debug(s2);
 
     }
 
@@ -229,7 +229,7 @@ public class TestTranslators {
 
         String s2 = SmtEscape.trimQuotes(s);
 
-        LOGGER.info(s2);
+        LOGGER.debug(s2);
 
     }
 
