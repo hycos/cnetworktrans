@@ -17,13 +17,15 @@
 
 package com.github.hycos.cnetworktrans.lang;
 
-import com.github.hycos.cnetwork.core.graph.*;
+import com.github.hycos.cnetwork.api.NodeKindInterface;
+import com.github.hycos.cnetwork.core.graph.ConstraintNetworkBuilder;
+import com.github.hycos.cnetwork.core.graph.Node;
+import com.github.hycos.cnetwork.core.graph.Operand;
+import com.github.hycos.cnetwork.core.graph.Operation;
 import com.github.hycos.cnetworktrans.exceptions.NotSupportedException;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.github.hycos.cnetwork.core.domain.range.NumCut;
-import com.github.hycos.cnetwork.core.domain.range.NumRange;
 import org.snt.inmemantlr.exceptions.ParseTreeProcessorException;
 
 import java.util.HashMap;
@@ -36,7 +38,7 @@ public abstract class SmtTranslator {
     protected ConstraintNetworkBuilder cn = null;
     protected Map<Node, String> vresolv = null;
     protected Map<Node, String> vdecl = null;
-    protected Stack<NodeKind> ctx;
+    protected Stack<NodeKindInterface> ctx;
 
 
     final static Logger LOGGER = LoggerFactory.getLogger(SmtTranslator.class);
@@ -167,13 +169,13 @@ public abstract class SmtTranslator {
             String lbl = "";
 
             //@TODO:Julian fix this -- we have to assume +1 dsize
-            NumRange nr = (NumRange) operand.getRange();
+            //NumRange nr = (NumRange) operand.getRange();
 
-            NumCut max = nr.getMax();
-            if (nr.getMax().isSmallerThan(0L)) {
-                lbl = "(- " + (-nr.getMax().getEndpoint()) + ")";
+            //NumCut max = nr.getMax();
+            if (operand.getDomain().isNegative()) {
+                lbl = "(- " + (-Integer.parseInt(operand.getShortLabel())) + ")";
             } else {
-                lbl = String.valueOf(max);
+                lbl = operand.getShortLabel();
             }
             ret.push(lbl);
             return ret;

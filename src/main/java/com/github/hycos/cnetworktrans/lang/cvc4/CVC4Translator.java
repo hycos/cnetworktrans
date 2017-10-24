@@ -17,11 +17,9 @@
 
 package com.github.hycos.cnetworktrans.lang.cvc4;
 
-import com.github.hycos.cnetwork.core.domain.range.BooleanRange;
-import com.github.hycos.cnetwork.core.domain.range.Range;
 import com.github.hycos.cnetwork.core.graph.Edge;
 import com.github.hycos.cnetwork.core.graph.Node;
-import com.github.hycos.cnetwork.core.graph.NodeKind;
+import com.github.hycos.cnetwork.core.graph.DefaultNodeKind;
 import com.github.hycos.cnetwork.core.graph.Operation;
 import com.github.hycos.cnetworktrans.exceptions.NotSupportedException;
 import com.github.hycos.cnetworktrans.lang.SmtEscape;
@@ -37,6 +35,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.Stack;
 
+import static com.github.hycos.cnetwork.core.graph.DefaultNodeKind.*;
+
 
 public class CVC4Translator extends SmtTranslator {
 
@@ -46,7 +46,7 @@ public class CVC4Translator extends SmtTranslator {
     }
 
 
-    public boolean ctxCheck(Node n, NodeKind kind) {
+    public boolean ctxCheck(Node n, DefaultNodeKind kind) {
         for(int k = this.ctx.size() - 1; k>= 0; k-- ){
             if(this.ctx.get(k) == kind) {
                 return true;
@@ -114,14 +114,14 @@ public class CVC4Translator extends SmtTranslator {
         boolean conv = false;
 
 
-        if (ctxCheck(op, NodeKind.MATCHES) && op.isString()) {
+        if (ctxCheck(op, MATCHES) && op.isString()) {
 
             LOGGER.debug("CHECK " + op.getLabel());
             // first parameters of Matches are always strings
             Set<Edge> incoming = cn.outgoingEdgesOf(op);
             if(incoming != null) {
                 for (Edge e : incoming) {
-                    if (e.getDestNode().getKind() == NodeKind.MATCHES &&
+                    if (e.getDestNode().getKind() == MATCHES &&
                             e.getSequence() == 0) {
                         return ret;
                     }
@@ -160,73 +160,84 @@ public class CVC4Translator extends SmtTranslator {
 
         List<Node> params = this.cn.getParametersFor(op);
         LOGGER.debug("handle " + operation.getKind());
-        switch(operation.getKind()){
-            case ADD:
+        switch(operation.getKind().getValue().toString().toUpperCase()){
+            case "ADD":
                 ret.push("+");
                 break;
-            case MATCHES:
+            case "MATCHES":
                 ret.push("str.in.re");
                 break;
-            case SUB:
+            case "SUB":
                 ret.push("-");
                 break;
-            case SMALLER:
+            case "SMALLER":
                 ret.push("<");
                 break;
-            case GREATER:
+            case "GREATER":
                 ret.push(">");
                 break;
-            case SMALLEREQ:
+            case "SMALLEREQ":
                 ret.push("<=");
                 break;
-            case GREATEREQ:
+            case "GREATEREQ":
                 ret.push(">=");
                 break;
-            case LEN:
+            case "LEN":
                 ret.push("str.len");
                 break;
-            case OR:
+            case "OR":
                 ret.push("or");
                 break;
-            case AND:
+            case "AND":
                 ret.push("and");
                 break;
-            case NEQUALS:
-            case BOOL_NEQUALS:
-            case STR_NEQUALS:
-            case NUM_NEQUALS:
-                Range r0 = op.getRange();
-                assert (r0 instanceof BooleanRange);
-                BooleanRange br0 = (BooleanRange)r0;
+            case "NEQUALS":
+            case "BOOL_NEQUALS":
+            case "STR_NEQUALS":
+            case "NUM_NEQUALS":
+//                Range r0 = op.getRange();
+//                assert (r0 instanceof BooleanRange);
+//                BooleanRange br0 = (BooleanRange)r0;
+//                ret.push("=");
+//                if (br0.isAlwaysTrue()) {
+//                    ret.push("not");
+//                }
+//                break;
                 ret.push("=");
-                if (br0.isAlwaysTrue()) {
+
+                //BooleanRange br1 = (BooleanRange) r1;
+                if (op.getDomain().isAlwaysTrue()) {
                     ret.push("not");
                 }
                 break;
-            case BOOL_EQUALS:
-            case STR_EQUALS:
-            case NUM_EQUALS:
-            case EQUALS:
-                Range r1 = op.getRange();
-                assert (r1 instanceof BooleanRange);
+            case "BOOL_EQUALS":
+            case "STR_EQUALS":
+            case "NUM_EQUALS":
+            case "EQUALS":
+
+                //op.getDomain().setTrue();
+
+                //Range r1 = op.getRange();
+                //assert (r1 instanceof BooleanRange);
                 ret.push("=");
-                BooleanRange br1 = (BooleanRange) r1;
-                if (br1.isAlwaysFalse()) {
+
+                //BooleanRange br1 = (BooleanRange) r1;
+                if (op.getDomain().isAlwaysFalse()) {
                     ret.push("not");
                 }
                 break;
-            case INDEXOF:
+            case "INDEXOF":
                 ret.push("str.indexof");
                 break;
-            case REPLACE:
-                ret.push("str.merge");
+            case "REPLACE":
+                ret.push("str.collapse");
                 break;
-            case VALUEOF:
+            case "TOINT":
                 if(params.get(0).isString()) {
                     ret.push("str.to.int");
                 }
                 break;
-            case TOSTR:
+            case "TOSTR":
 
                 if(params.get(0).isNumeric()) {
                     ret.push("int.to.str");
@@ -234,44 +245,44 @@ public class CVC4Translator extends SmtTranslator {
                     return ret;
                 }
 
-                if(ctxCheck(op, NodeKind.MATCHES)) {
-                    if (this.ctx.peek() == NodeKind.TOSTR) {
+                if(ctxCheck(op, MATCHES)) {
+                    if (this.ctx.peek() == DefaultNodeKind.TOSTR) {
                         ret.push("str.to.re");
                     }
                 }
 
                 break;
-            case SUBSTR:
+            case "SUBSTR":
                 ret.push("str.substr");
                 break;
-            case CONCAT:
-                if(ctxCheck(op, NodeKind.MATCHES)) {
+            case "CONCAT":
+                if(ctxCheck(op, MATCHES)) {
                     ret.push("re.++");
                     //wrapStringParams(op,false);
                 } else {
                     ret.push("str.++");
                 }
                 break;
-            case SEARCH:
-            case EXTERNAL:
-            case TOUPPER:
-            case TOLOWER:
-            case STR_EQUALSIC:
-            case STR_NEQUALSIC:
-            case APACHE_ESCECMA:
-            case APACHE_ESCHTML:
-            case APACHE_UESCHTML:
-            case APACHE_ESCJSON:
-            case APACHE_ESCXML10:
-            case APACHE_ESCXML11:
-            case ESAPI_ESCDN:
-            case ESAPI_ESCHTML:
-            case ESAPI_ESCHTMLATTR:
-            case ESAPI_ESCLDAP:
-            case ESAPI_ESCSQL:
-            case ESAPI_ESCXML:
-            case ESAPI_ESCXMLATTR:
-            case ESAPI_ESCXPATH:
+            case "SEARCH":
+            case "EXTERNAL":
+            case "TOUPPER":
+            case "TOLOWER":
+            case "STR_EQUALSIC":
+            case "STR_NEQUALSIC":
+            case "APACHE_ESCECMA":
+            case "APACHE_ESCHTML":
+            case "APACHE_UESCHTML":
+            case "APACHE_ESCJSON":
+            case "APACHE_ESCXML10":
+            case "APACHE_ESCXML11":
+            case "ESAPI_ESCDN":
+            case "ESAPI_ESCHTML":
+            case "ESAPI_ESCHTMLATTR":
+            case "ESAPI_ESCLDAP":
+            case "ESAPI_ESCSQL":
+            case "ESAPI_ESCXML":
+            case "ESAPI_ESCXMLATTR":
+            case "ESAPI_ESCXPATH":
                 throw new NotSupportedException(operation.getKind().toString() + " not supported");
         }
 
@@ -281,27 +292,27 @@ public class CVC4Translator extends SmtTranslator {
     @Override
     protected boolean notTranslatable(Operation op) {
 
-        switch(op.getKind()) {
-            case SEARCH:
-            case EXTERNAL:
-            case TOUPPER:
-            case TOLOWER:
-            case STR_EQUALSIC:
-            case STR_NEQUALSIC:
-            case APACHE_ESCECMA:
-            case APACHE_ESCHTML:
-            case APACHE_UESCHTML:
-            case APACHE_ESCJSON:
-            case APACHE_ESCXML10:
-            case APACHE_ESCXML11:
-            case ESAPI_ESCDN:
-            case ESAPI_ESCHTML:
-            case ESAPI_ESCHTMLATTR:
-            case ESAPI_ESCLDAP:
-            case ESAPI_ESCSQL:
-            case ESAPI_ESCXML:
-            case ESAPI_ESCXMLATTR:
-            case ESAPI_ESCXPATH:
+        switch(op.getKind().getValue().toUpperCase()) {
+            case "SEARCH":
+            case "EXTERNAL":
+            case "TOUPPER":
+            case "TOLOWER":
+            case "STR_EQUALSIC":
+            case "STR_NEQUALSIC":
+            case "APACHE_ESCECMA":
+            case "APACHE_ESCHTML":
+            case "APACHE_UESCHTML":
+            case "APACHE_ESCJSON":
+            case "APACHE_ESCXML10":
+            case "APACHE_ESCXML11":
+            case "ESAPI_ESCDN":
+            case "ESAPI_ESCHTML":
+            case "ESAPI_ESCHTMLATTR":
+            case "ESAPI_ESCLDAP":
+            case "ESAPI_ESCSQL":
+            case "ESAPI_ESCXML":
+            case "ESAPI_ESCXMLATTR":
+            case "ESAPI_ESCXPATH":
                 return true;
         }
         return false;

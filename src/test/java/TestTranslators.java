@@ -15,19 +15,19 @@
  * specific language governing permissions and limitations under the Licence.
  */
 
+import com.github.hycos.cnetwork.api.labelmgr.exception.InconsistencyException;
 import com.github.hycos.cnetwork.core.graph.ConstraintNetworkBuilder;
+import com.github.hycos.cnetwork.core.graph.DefaultNodeKind;
 import com.github.hycos.cnetwork.core.graph.Node;
-import com.github.hycos.cnetwork.core.graph.NodeKind;
 import com.github.hycos.cnetwork.core.graph.Operand;
-import com.github.hycos.cnetwork.exception.EUFInconsistencyException;
 import com.github.hycos.cnetworktrans.core.OutputFormat;
 import com.github.hycos.cnetworktrans.exceptions.NotSupportedException;
 import com.github.hycos.cnetworktrans.lang.SmtEscape;
 import com.github.hycos.cnetworktrans.lang.SmtTranslator;
 import com.github.hycos.cnetworktrans.lang.cvc4.CVC4Escape;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.snt.inmemantlr.exceptions.ParseTreeProcessorException;
@@ -39,30 +39,30 @@ public class TestTranslators {
 
     private static ConstraintNetworkBuilder cn = null;
 
-    @Before
-    public void setUp() throws Exception {
+    @BeforeAll
+    public static void setUp() throws Exception {
         cn = new ConstraintNetworkBuilder();
 
-        Operand a = new Operand("a", NodeKind.NUMVAR);
-        Operand b = new Operand("b", NodeKind.NUMVAR);
-        Operand c = new Operand("20", NodeKind.NUMLIT);
+        Operand a = new Operand("a", DefaultNodeKind.NUMVAR);
+        Operand b = new Operand("b", DefaultNodeKind.NUMVAR);
+        Operand c = new Operand("20", DefaultNodeKind.NUMLIT);
 
-        Node add = cn.addOperation(NodeKind.ADD,a,b);
-        Node smeq = cn.addConstraint(NodeKind.SMALLEREQ, add, c);
+        Node add = cn.addOperation(DefaultNodeKind.ADD,a,b);
+        Node smeq = cn.addConstraint(DefaultNodeKind.SMALLEREQ, add, c);
 
 
-        Operand s = new Operand("s1", NodeKind.STRVAR);
-        Operand ip = new Operand("a*", NodeKind.STRREXP);
+        Operand s = new Operand("s1", DefaultNodeKind.STRVAR);
+        Operand ip = new Operand("a*", DefaultNodeKind.STRREXP);
 
-        Node matches = cn.addConstraint(NodeKind.MATCHES, s, ip);
+        Node matches = cn.addConstraint(DefaultNodeKind.MATCHES, s, ip);
 
-        Node len = cn.addOperation(NodeKind.LEN,s);
+        Node len = cn.addOperation(DefaultNodeKind.LEN,s);
 
-        Node lencon = cn.addConstraint(NodeKind.GREATEREQ, len, c);
+        Node lencon = cn.addConstraint(DefaultNodeKind.GREATEREQ, len, c);
 
-        Node conv = cn.addOperation(NodeKind.TOSTR, a);
+        Node conv = cn.addOperation(DefaultNodeKind.TOSTR, a);
 
-        Node matches2 = cn.addConstraint(NodeKind.MATCHES, s, conv);
+        Node matches2 = cn.addConstraint(DefaultNodeKind.MATCHES, s, conv);
     }
 
 
@@ -103,7 +103,7 @@ public class TestTranslators {
         try {
             out = sa.translate();
         } catch (NotSupportedException | ParseTreeProcessorException e) {
-            Assert.assertFalse(true);
+            Assertions.assertFalse(true);
         }
 
         //LOGGER.debug(out);
@@ -116,24 +116,24 @@ public class TestTranslators {
         try {
             ConstraintNetworkBuilder tm = new ConstraintNetworkBuilder();
 
-            Node x = new Operand("x", NodeKind.STRVAR);
-            Node or = new Operand(".*' +[Oo][Rr] +'", NodeKind.STRREXP);
-            Node v1 = new Operand("sv1", NodeKind.STRVAR);
-            Node orv1 = tm.addOperation(NodeKind.CONCAT, or, v1);
-            Node eq = new Operand("'.*=.*'", NodeKind.STRREXP);
-            Node v2 = new Operand("sv2", NodeKind.STRVAR);
-            Node orv1comp = tm.addOperation(NodeKind.CONCAT, eq, v2);
-            Node orv1compv2 = tm.addOperation(NodeKind.CONCAT, orv1, orv1comp);
+            Node x = new Operand("x", DefaultNodeKind.STRVAR);
+            Node or = new Operand(".*' +[Oo][Rr] +'", DefaultNodeKind.STRREXP);
+            Node v1 = new Operand("sv1", DefaultNodeKind.STRVAR);
+            Node orv1 = tm.addOperation(DefaultNodeKind.CONCAT, or, v1);
+            Node eq = new Operand("'.*=.*'", DefaultNodeKind.STRREXP);
+            Node v2 = new Operand("sv2", DefaultNodeKind.STRVAR);
+            Node orv1comp = tm.addOperation(DefaultNodeKind.CONCAT, eq, v2);
+            Node orv1compv2 = tm.addOperation(DefaultNodeKind.CONCAT, orv1, orv1comp);
 
             try {
-                tm.addConstraint(NodeKind.STR_NEQUALS, v1, v2);
-            } catch (EUFInconsistencyException e) {
-                Assert.assertFalse(true);
+                tm.addConstraint(DefaultNodeKind.STR_NEQUALS, v1, v2);
+            } catch (InconsistencyException e) {
+                Assertions.assertFalse(true);
             }
             try {
-                tm.addConstraint(NodeKind.MATCHES, x, orv1compv2);
-            } catch (EUFInconsistencyException e) {
-                Assert.assertFalse(true);
+                tm.addConstraint(DefaultNodeKind.MATCHES, x, orv1compv2);
+            } catch (InconsistencyException e) {
+                Assertions.assertFalse(true);
             }
 
             //LOGGER.debug(tm.toDot());
@@ -148,10 +148,10 @@ public class TestTranslators {
             try {
                 out = sa.translate();
             } catch (NotSupportedException | ParseTreeProcessorException e) {
-                Assert.assertFalse(true);
+                Assertions.assertFalse(true);
             }
-        } catch (EUFInconsistencyException e) {
-            Assert.assertFalse(true);
+        } catch (InconsistencyException e) {
+            Assertions.assertFalse(true);
         }
 
         //LOGGER.debug(out);
@@ -163,35 +163,35 @@ public class TestTranslators {
         try {
             ConstraintNetworkBuilder tm2 = new ConstraintNetworkBuilder();
 
-            Node x = new Operand("x", NodeKind.STRVAR);
+            Node x = new Operand("x", DefaultNodeKind.STRVAR);
             String sor = ".*' +[Oo][Rr] +'";
-            Node or = new Operand(sor, NodeKind.STRREXP);
+            Node or = new Operand(sor, DefaultNodeKind.STRREXP);
 
-            Node v1 = new Operand("sv7", NodeKind.NUMVAR);
+            Node v1 = new Operand("sv7", DefaultNodeKind.NUMVAR);
 
-            Node toStrV1 = tm2.addOperation(NodeKind.TOSTR, v1);
+            Node toStrV1 = tm2.addOperation(DefaultNodeKind.TOSTR, v1);
 
-            Node orv1 = tm2.addOperation(NodeKind.CONCAT, or, toStrV1);
+            Node orv1 = tm2.addOperation(DefaultNodeKind.CONCAT, or, toStrV1);
 
-            Node eq = new Operand(" +\\>= +", NodeKind.STRREXP);
+            Node eq = new Operand(" +\\>= +", DefaultNodeKind.STRREXP);
 
-            Node orv1comp = tm2.addOperation(NodeKind.CONCAT, orv1, eq);
+            Node orv1comp = tm2.addOperation(DefaultNodeKind.CONCAT, orv1, eq);
 
-            Node v2 = new Operand("sv8", NodeKind.NUMVAR);
+            Node v2 = new Operand("sv8", DefaultNodeKind.NUMVAR);
 
-            Node toStrV2 = tm2.addOperation(NodeKind.TOSTR, v2);
+            Node toStrV2 = tm2.addOperation(DefaultNodeKind.TOSTR, v2);
 
-            Node orv1compv2 = tm2.addOperation(NodeKind.CONCAT, orv1comp, toStrV2);
+            Node orv1compv2 = tm2.addOperation(DefaultNodeKind.CONCAT, orv1comp, toStrV2);
 
             String scomment = "(\\<!\\-\\-|#)";
-            Node comment = new Operand(scomment, NodeKind.STRREXP);
+            Node comment = new Operand(scomment, DefaultNodeKind.STRREXP);
 
-            tm2.addOperation(NodeKind.CONCAT, orv1compv2, comment);
+            tm2.addOperation(DefaultNodeKind.CONCAT, orv1compv2, comment);
 
-            tm2.addConstraint(NodeKind.GREATEREQ, v1, v2);
+            tm2.addConstraint(DefaultNodeKind.GREATEREQ, v1, v2);
 
             tm2.setStartNode(orv1compv2);
-            tm2.addConstraint(NodeKind.MATCHES, x, orv1compv2);
+            tm2.addConstraint(DefaultNodeKind.MATCHES, x, orv1compv2);
 
             SmtTranslator sa = OutputFormat.CVC4.getTranslator();
             try {
@@ -203,10 +203,10 @@ public class TestTranslators {
             try {
                 out = sa.translate();
             } catch (NotSupportedException | ParseTreeProcessorException e) {
-                Assert.assertFalse(true);
+                Assertions.assertFalse(true);
             }
-        } catch(EUFInconsistencyException e) {
-            Assert.assertFalse(true);
+        } catch(InconsistencyException e) {
+            Assertions.assertFalse(true);
         }
 
 
