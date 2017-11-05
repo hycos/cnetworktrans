@@ -45,7 +45,7 @@ public class Z3Translator extends SmtTranslator {
 
         // first check variables
         for (Node n : cn.vertexSet()) {
-            if (n.isVariable()) {
+            if (n.isVariable() && !n.isRegex()) {
 
                 String type;
 

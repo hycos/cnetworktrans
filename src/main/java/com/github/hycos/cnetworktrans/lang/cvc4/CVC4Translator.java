@@ -68,7 +68,7 @@ public class CVC4Translator extends SmtTranslator {
 
         // first check variables
         for (Node n : cn.vertexSet()) {
-            if (n.isVariable()) {
+            if (n.isVariable() && !n.isRegex()) {
                 String type;
                 if (n.isBoolean()) {
                     type = "Bool";
@@ -77,7 +77,8 @@ public class CVC4Translator extends SmtTranslator {
                 } else {
                     type = "Int";
                 }
-                finalOut.append("(declare-fun " + n.getLabel() + " () " + type + ")\n");
+                finalOut.append("(declare-fun " + n.getShortLabel() + " () " + type + ")" +
+                        "\n");
             }
             // backtrack starting from basic constraints
             if(n.isConstraint()) {

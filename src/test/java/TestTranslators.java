@@ -52,7 +52,7 @@ public class TestTranslators {
 
 
         Operand s = new Operand("s1", DefaultNodeKind.STRVAR);
-        Operand ip = new Operand("a*", DefaultNodeKind.STRREXP);
+        Operand ip = new Operand("a*", DefaultNodeKind.STREXP);
 
         Node matches = cn.addConstraint(DefaultNodeKind.MATCHES, s, ip);
 
@@ -117,10 +117,10 @@ public class TestTranslators {
             ConstraintNetworkBuilder tm = new ConstraintNetworkBuilder();
 
             Node x = new Operand("x", DefaultNodeKind.STRVAR);
-            Node or = new Operand(".*' +[Oo][Rr] +'", DefaultNodeKind.STRREXP);
+            Node or = new Operand(".*' +[Oo][Rr] +'", DefaultNodeKind.STREXP);
             Node v1 = new Operand("sv1", DefaultNodeKind.STRVAR);
             Node orv1 = tm.addOperation(DefaultNodeKind.CONCAT, or, v1);
-            Node eq = new Operand("'.*=.*'", DefaultNodeKind.STRREXP);
+            Node eq = new Operand("'.*=.*'", DefaultNodeKind.STREXP);
             Node v2 = new Operand("sv2", DefaultNodeKind.STRVAR);
             Node orv1comp = tm.addOperation(DefaultNodeKind.CONCAT, eq, v2);
             Node orv1compv2 = tm.addOperation(DefaultNodeKind.CONCAT, orv1, orv1comp);
@@ -147,6 +147,7 @@ public class TestTranslators {
             String out = "";
             try {
                 out = sa.translate();
+                LOGGER.debug(out);
             } catch (NotSupportedException | ParseTreeProcessorException e) {
                 Assertions.assertFalse(true);
             }
@@ -154,7 +155,7 @@ public class TestTranslators {
             Assertions.assertFalse(true);
         }
 
-        //LOGGER.debug(out);
+
     }
 
     @Test
@@ -165,7 +166,7 @@ public class TestTranslators {
 
             Node x = new Operand("x", DefaultNodeKind.STRVAR);
             String sor = ".*' +[Oo][Rr] +'";
-            Node or = new Operand(sor, DefaultNodeKind.STRREXP);
+            Node or = new Operand(sor, DefaultNodeKind.STREXP);
 
             Node v1 = new Operand("sv7", DefaultNodeKind.NUMVAR);
 
@@ -173,7 +174,7 @@ public class TestTranslators {
 
             Node orv1 = tm2.addOperation(DefaultNodeKind.CONCAT, or, toStrV1);
 
-            Node eq = new Operand(" +\\>= +", DefaultNodeKind.STRREXP);
+            Node eq = new Operand(" +\\>= +", DefaultNodeKind.STREXP);
 
             Node orv1comp = tm2.addOperation(DefaultNodeKind.CONCAT, orv1, eq);
 
@@ -184,7 +185,7 @@ public class TestTranslators {
             Node orv1compv2 = tm2.addOperation(DefaultNodeKind.CONCAT, orv1comp, toStrV2);
 
             String scomment = "(\\<!\\-\\-|#)";
-            Node comment = new Operand(scomment, DefaultNodeKind.STRREXP);
+            Node comment = new Operand(scomment, DefaultNodeKind.STREXP);
 
             tm2.addOperation(DefaultNodeKind.CONCAT, orv1compv2, comment);
 
