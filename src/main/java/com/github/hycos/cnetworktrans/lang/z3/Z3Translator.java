@@ -69,7 +69,7 @@ public class Z3Translator extends SmtTranslator {
 
         for (Node n : cn.vertexSet()) {
             if(n.isConstraint()) {
-                finalOut.append("(assert (= true " + this.vresolv.get(n) + " ))\n");
+                finalOut.append("(assert " + this.vresolv.get(n) + " )\n");
             }
         }
 
@@ -134,7 +134,7 @@ public class Z3Translator extends SmtTranslator {
             case "IMPLIES":
                 ret.push("implies");
                 break;
-
+            case "!=":
             case "NEQUALS":
             case "BOOL_NEQUALS":
             case "STR_NEQUALS":
@@ -147,6 +147,8 @@ public class Z3Translator extends SmtTranslator {
                     ret.push("not");
                 }
                 break;
+            case "==":
+            case "=":
             case "BOOL_EQUALS":
             case "STR_EQUALS":
             case "NUM_EQUALS":

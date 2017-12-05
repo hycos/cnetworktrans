@@ -62,9 +62,9 @@ public class CVC4Translator extends SmtTranslator {
         StringBuilder finalOut = new StringBuilder();
         LOGGER.debug("translate");
 
-        finalOut.append("(elems-logic QF_S)\n" +
-                "(elems-option :produce-models true)\n" +
-                "(elems-option :strings-exp true)\n");
+        finalOut.append("(set-logic ALL)\n" +
+                "(set-option :produce-models true)\n" +
+                "(set-option :strings-exp true)\n");
 
         // first check variables
         for (Node n : cn.vertexSet()) {
@@ -91,7 +91,7 @@ public class CVC4Translator extends SmtTranslator {
 
         for (Node n : cn.vertexSet()) {
             if(n.isConstraint()) {
-                finalOut.append("(assert (= true " + this.vresolv.get(n) + " ))\n");
+                finalOut.append("(assert " + this.vresolv.get(n) + " )\n");
             }
         }
 
@@ -110,7 +110,7 @@ public class CVC4Translator extends SmtTranslator {
 
     @Override
     public Stack<String> getOperandTrans(Node op) throws NotSupportedException {
-        Stack<String> ret = new Stack<String>();
+        Stack<String> ret = new Stack<>();
 
         boolean conv = false;
 
@@ -192,6 +192,7 @@ public class CVC4Translator extends SmtTranslator {
             case "AND":
                 ret.push("and");
                 break;
+            case "!=":
             case "NEQUALS":
             case "BOOL_NEQUALS":
             case "STR_NEQUALS":
@@ -207,10 +208,12 @@ public class CVC4Translator extends SmtTranslator {
                 ret.push("=");
 
                 //BooleanRange br1 = (BooleanRange) r1;
-                if (op.getDomain().isAlwaysTrue()) {
+                //if (op.getDomain().isAlwaysTrue()) {
                     ret.push("not");
-                }
+                //}
                 break;
+            case "==":
+            case "=":
             case "BOOL_EQUALS":
             case "STR_EQUALS":
             case "NUM_EQUALS":
