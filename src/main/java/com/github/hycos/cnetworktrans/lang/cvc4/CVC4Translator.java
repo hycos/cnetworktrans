@@ -145,7 +145,7 @@ public class CVC4Translator extends SmtTranslator {
     public Stack<String> getOperationTrans(Node op) throws NotSupportedException {
 
         LOGGER.debug("get Operation Trans " );
-        Stack<String> ret = new Stack<String>();
+        Stack<String> ret = new Stack<>();
 
         Operation operation = null;
 

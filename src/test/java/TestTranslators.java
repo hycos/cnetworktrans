@@ -52,7 +52,7 @@ public class TestTranslators {
 
 
         Operand s = new Operand("s1", DefaultNodeKind.STRVAR);
-        Operand ip = new Operand("a*", DefaultNodeKind.STREXP);
+        Operand ip = new Operand("abc*", DefaultNodeKind.STREXP);
 
         Node matches = cn.addConstraint(DefaultNodeKind.MATCHES, s, ip);
 
@@ -64,6 +64,7 @@ public class TestTranslators {
 
         Node matches2 = cn.addConstraint(DefaultNodeKind.MATCHES, s, conv);
     }
+
 
 
     @Test
